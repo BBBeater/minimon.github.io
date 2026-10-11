@@ -4,47 +4,73 @@
 <title>มอนสเตอร์ขนมหวาน</title>
 <meta name="description" content="เกมการ์ดสุ่มสะสมมอนสเตอร์ 8 ธาตุ เล่นกับบอทหรือเพื่อนออนไลน์">
 <style>
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#fff8fb;--ink:#4a3f55;--card:#fff;--line:#eadcf0;--btn:#d9c7ff}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#fff8fb;--ink:#4a3f55;--card:#fff;--line:#eadcf0;--btn:#d9c7ff;--pink:#ff7aa8}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#241f2d;--ink:#f1e9f7;--card:#352e40;--line:#4d4259;--btn:#7b63b8}}
 :root[data-theme="dark"]{--bg:#241f2d;--ink:#f1e9f7;--card:#352e40;--line:#4d4259;--btn:#7b63b8}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Sarabun","Noto Sans Thai",system-ui,sans-serif}
-main{max-width:680px;margin:0 auto;padding:12px}
-h1{font-size:22px;margin:2px 0 8px;text-align:center}
+main{max-width:680px;margin:0 auto;padding:0 12px 24px}
+h1{font-size:21px;margin:10px 0 0;text-align:center}
+.top{position:sticky;top:0;z-index:6;display:flex;justify-content:space-between;align-items:center;background:var(--bg);padding:8px 2px;margin-bottom:8px;border-bottom:2px solid var(--line)}
+.coin{font-weight:800;font-size:18px;display:inline-block}
 .box{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
-input{font:inherit;padding:9px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);width:100%;margin:4px 0}
-button{font:inherit;font-weight:700;padding:9px 14px;border:0;border-radius:14px;background:var(--btn);color:var(--ink);cursor:pointer}
-button:disabled{opacity:.45;cursor:default}
-button.on{outline:3px solid #ff9fb8}
+input,textarea{font:inherit;padding:9px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);width:100%;margin:4px 0}
+textarea{font-size:11px;resize:none}
+button{font:inherit;font-weight:700;padding:9px 14px;border:0;border-radius:14px;background:var(--btn);color:var(--ink);cursor:pointer;transition:transform .1s}
+button:active{transform:scale(.95)}button:disabled{opacity:.45;cursor:default}
+button.sm{padding:5px 10px}button.on{outline:3px solid var(--pink)}button.go{background:#ff9fb8;color:#3a3045;font-size:16px;padding:10px 18px}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .nav{display:flex;gap:6px;margin-bottom:10px}.nav button{flex:1}
-.coin{text-align:center;font-weight:800;margin-bottom:8px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px}
-.card{position:relative;border-radius:12px;border:2px solid var(--line);padding:3px;text-align:center;font-size:11px;line-height:1.2;color:#3a3045;cursor:default;user-select:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px}
+.card{position:relative;border-radius:12px;border:2px solid var(--line);padding:3px;text-align:center;font-size:11px;line-height:1.2;color:#3a3045;user-select:none}
 .card .em{font-size:30px;line-height:1.3}
 .card b{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .card .p{position:absolute;top:1px;left:4px;font-weight:800;font-size:14px;font-style:normal}
 .card .ab{position:absolute;top:1px;right:3px;font-style:normal;font-size:12px}
 .card .n{position:absolute;bottom:1px;right:3px;font-size:10px;background:#4a3f55;color:#fff;border-radius:8px;padding:0 5px}
 .card.R{border-color:#f2b84b}.card.L{border-color:#c46bff;box-shadow:0 0 8px #c46bff99}
-.card.pick,.card.add{cursor:pointer}.card.sel{transform:translateY(-6px);outline:3px solid #ff7aa8}
+.card.pick,.card.add{cursor:pointer}.card.pick:hover{transform:translateY(-4px)}
+.card.sel{outline:3px solid var(--pink);animation:lift .18s forwards}
 .card.dim{opacity:.35;filter:grayscale(1)}
-.hand{display:flex;gap:6px;flex-wrap:wrap}.hand .card{width:70px}
+.card.nw::after{content:"NEW";position:absolute;top:-7px;right:-5px;background:#ff5c8a;color:#fff;border-radius:8px;font-size:9px;padding:0 5px;font-weight:800}
+.hand{display:flex;gap:8px;overflow-x:auto;padding:12px 4px 8px}.hand .card{width:76px;flex:0 0 auto}
+.bar{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:8px 12px;margin-bottom:8px}
+.pl.r{text-align:right}.pips{letter-spacing:3px;color:var(--pink);font-size:18px}.mid{font-weight:800;text-align:center}
 .field{background:linear-gradient(var(--card),var(--bg));border:2px dashed var(--line);border-radius:18px;padding:8px;display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-.col{display:flex;flex-direction:column;gap:4px;align-items:center}
-.col .card,.slot{width:100%;max-width:84px}
-.slot{min-height:64px;border:2px dashed var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;opacity:.6;font-size:20px}
-.slot.now{border-color:#ff7aa8;opacity:1}
+.col{display:flex;flex-direction:column;gap:4px;align-items:center}.col .card,.slot,.cback{width:100%;max-width:84px}
+.slot,.cback{min-height:66px;border:2px dashed var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;opacity:.6;font-size:18px;text-align:center}
+.slot.now{border-color:var(--pink);opacity:1;font-size:12px}
+.cback{border-style:solid;opacity:1;font-size:26px;background:repeating-linear-gradient(45deg,#d9c7ff,#d9c7ff 6px,#f3e9ff 6px,#f3e9ff 12px);animation:float 1.4s infinite}
 .res{font-size:18px;min-height:24px}
-.score{display:flex;justify-content:space-between;font-weight:800;font-size:17px}
-.big{font-size:20px;text-align:center;margin:8px 0}
-small{opacity:.8}.chips button{padding:5px 9px;font-size:13px}
+.big{font-size:19px;text-align:center;margin:8px 0}
+.cbar{position:sticky;bottom:8px;z-index:5;background:var(--card);border:2px solid var(--pink);border-radius:16px;padding:10px;margin-top:6px;display:flex;gap:8px;justify-content:space-between;align-items:center;flex-wrap:wrap;animation:pop .2s}
+.warn{border-color:var(--pink)}.steps{padding-left:18px;margin:6px 0}.steps li{margin-bottom:8px}
+.reward{font-size:28px;font-weight:800;animation:pop .6s .3s both}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:#4a3f55;color:#fff;padding:10px 16px;border-radius:20px;opacity:0;transition:.25s;pointer-events:none;z-index:20;max-width:90%;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:10}
+.confetti i{position:absolute;top:-30px;font-style:normal;font-size:24px;animation:fall 3s linear forwards}
+small{opacity:.85}.chips button{padding:5px 9px;font-size:13px}
+@keyframes deal{from{opacity:0;transform:translateY(50px) scale(.8) rotate(-8deg)}to{opacity:1;transform:none}}
+@keyframes flip{0%{transform:perspective(400px) rotateY(90deg);opacity:0}100%{transform:perspective(400px) rotateY(0);opacity:1}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.07)}100%{transform:scale(1);opacity:1}}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@keyframes glow{50%{box-shadow:0 0 18px 5px #ffd54a}}
+@keyframes lift{to{transform:translateY(-8px)}}
+@keyframes float{50%{transform:translateY(-4px)}}
+@keyframes bump{50%{transform:scale(1.35)}}
+@keyframes fall{to{transform:translateY(110vh) rotate(400deg)}}
+.deal{animation:deal .45s both;animation-delay:var(--d,0s)}
+.flip{animation:flip .55s both;animation-delay:var(--d,0s)}
+.win{animation:glow 1s 2}.lose{animation:shake .4s;opacity:.7}.pop{animation:pop .4s both}.bump{animation:bump .45s}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head>
 <body><main>
 <h1>🍮 มอนสเตอร์ขนมหวาน 🍓</h1>
 <div id="app"></div>
 </main>
+<div id="toast" class="toast"></div>
 <script>
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -55,29 +81,37 @@ const TINT={fire:"#ffd3c6",water:"#cbe8ff",leaf:"#d3f2d4",elec:"#fff3b8",earth:"
 // แต่ละธาตุชนะ 3 แพ้ 3 เสมอ 1
 const BEAT={fire:["leaf","ice","dark"],water:["fire","earth","wind"],leaf:["water","earth","elec"],elec:["water","ice","dark"],earth:["fire","elec","dark"],ice:["water","leaf","wind"],wind:["fire","elec","earth"],dark:["ice","leaf","wind"]};
 const WHY={fire:"เผาไหม้ / ละลายน้ำแข็ง / แสงไฟไล่เงา",water:"ดับไฟ / กัดเซาะดิน / ฝนกดลมสงบ",leaf:"ดูดซับน้ำ / รากชอนไชดิน / ไม้เป็นฉนวน",elec:"ช็อตผ่านน้ำ / ความร้อนละลายน้ำแข็ง / แสงไล่เงา",earth:"ทับไฟ / สายดินดูดไฟฟ้า / หินแข็งกว่าเงา",ice:"แช่แข็งน้ำ / แช่แข็งใบไม้ / แช่แข็งสายลม",wind:"พัดไฟดับ / กระชากสายไฟ / กัดเซาะหิน",dark:"กลืนความเย็น / บังแสงใบไม้ / ซ่อนจากลม"};
-const AB={s:["🛡️","โล่","ไม่โดนโบนัสธาตุของคู่ต่อสู้"],x:["⚔️","เจาะธาตุ","ชนะทางธาตุได้ +4 แทน +2"],l:["🍀","โชคดี","ชนะรอบนี้ จั่วเพิ่ม 2 ใบ"],t:["🎯","คู่ขาด","พลังเท่ากัน = ชนะ"],n:["🌀","ล้างธาตุ","ยกเลิกโบนัสธาตุทั้งสองฝั่ง"],r:["💰","รวย","ชนะรอบนี้ ได้ 🪙+10"]};
+const AB={s:["🛡️","โล่","ไม่โดนโบนัสธาตุของคู่ต่อสู้"],x:["⚔️","เจาะธาตุ","ชนะทางธาตุได้ +4 แทน +2"],l:["🍀","โชคดี","ชนะรอบนี้ จั่วเพิ่ม 2 ใบ"],t:["🎯","คู่ขาด","พลังเท่ากัน = ชนะ"],n:["🌀","ล้างธาตุ","ยกเลิกโบนัสธาตุทั้งสองฝั่ง"],r:["💰","รวย","ชนะรอบนี้ ได้ 🪙+10"],k:["🔇","ปิดผนึก","ยกเลิกความสามารถของการ์ดคู่ต่อสู้ในรอบนี้ (ถ้าปิดผนึกทั้งคู่ ต่างฝ่ายต่างถูกปิด)"],g:["💪","สู้คืน","ถ้าแต้มตามอยู่ ได้พลัง +2"]};
 const RN={C:"ธรรมดา",R:"หายาก",L:"ตำนาน"};
-// รายชื่อ: C(ที่เหลือ) + R 4 + L 2 ต่อธาตุ · pattern: s,x,l,t,n,r = ความสามารถ
+// รายชื่อ: C(ที่เหลือ) + R 4 + L 2 ต่อธาตุ · pattern: ตัวอักษรความสามารถ (s,x,l,t,n,r,k,g) หรือ - = ไม่มี
 const D={
-fire:["🦊จิ้งจอกถ่าน,🐯เสือเตา,🦎กิ้งก่าไฟ,🐓ไก่เพลิง,🐕หมาเถ้า,🐒ลิงควัน,🐖หมูย่าง,🦁สิงห์ลาวา,🐂วัวเพลิง,🐎ม้าเปลวเพลิง,🦂แมงป่องร้อน,🐉มังกรแดง,🦖ไดโนภูเขาไฟ","-r--s--x-l-xn"],
-water:["🐟ปลาฟอง,🐢เต่าธาร,🦀ปูกรรไกร,🐸กบฝน,🦐กุ้งจิ๋ว,🐠ปลาการ์ตูน,🦆เป็ดบึง,🐙หมึกยักษ์,🦈ฉลามคลื่น,🐬โลมาเกลียวคลื่น,🦦นากธาร,🐋วาฬคลื่น,🦑หมึกพายุ","--s--r-t-x-sl"],
-leaf:["🐛หนอนใบ,🐰กระต่ายหญ้า,🐌หอยทากมอส,🦗จิ้งหรีดใบ,🐞เต่าทองดอก,🦋ผีเสื้อละออง,🐹แฮมสเตอร์ถั่ว,🦌กวางป่า,🦥สลอธมอส,🦘จิงโจ้เถาวัลย์,🐼แพนด้าไผ่,🦕ไดโนป่า,🦧ลิงผู้พิทักษ์","-l--r-n-s-tlx"],
-elec:["🐝ผึ้งสปาร์ก,🐭หนูแรงดัน,🦇ค้างคาวคลื่น,🐈แมวไฟสถิต,🦔เม่นประจุ,🦟ยุงช็อต,🐤เจี๊ยบไฟช็อต,🦅นกฟ้าผ่า,🐺หมาป่าสายฟ้า,🦓ม้าลายเส้นไฟ,🦒ยีราฟล่อฟ้า,🦄ยูนิคอร์นสายฟ้า,🐲มังกรพายุ","--t--s-x-l-nx"],
-earth:["🐜มดดิน,🐗หมูป่าหิน,🦎กิ้งก่าโคลน,🦡แบดเจอร์ถ้ำ,🐀หนูขุดดิน,🐪อูฐทราย,🦏แรดผา,🐃ควายนา,🐄วัวผา,🐻หมีถ้ำ,🐘ช้างภูเขา,🐫อูฐเทพทะเลทราย","-s--r-t-x-sl"],
-ice:["🐧เพนกวินจิ๋ว,🐇กระต่ายหิมะ,🦢หงส์ผลึก,🐑แกะขนฝอย,🐐แพะหน้าผา,🦉นกฮูกน้ำค้าง,🐩พุดเดิ้ลน้ำค้างแข็ง,🦙ลามะขนเยือก,🦃ไก่งวงเหมันต์,🦛ฮิปโปเยือก,🐳วาฬน้ำแข็ง,🐊จระเข้เหมันต์","--n-s--l-x-t"],
-wind:["🐦นกจิ๊บลม,🦜นกแก้วพายุ,🐥เจี๊ยบกระโชก,🦩ฟลามิงโกเหินลม,🐴ม้าน้อยลม,🐔ไก่ลมหมุน,🐆เสือดาวพายุ,🐅เสือลมกรด,🕊️นกพิราบสายลม,🐿️กระรอกร่อน,🦅อินทรีทะเลทราย,🦚นกยูงเฮอริเคน","-x--l-s--t-n"],
-dark:["🕷️แมงมุมเงา,🐍งูราตรี,🦇ค้างคาวมืด,🐀หนูท่อ,🦉นกฮูกราตรี,🦂แมงป่องดำ,🐺หมาป่าเงา,🦝แรคคูนจอมขโมย,🐈แมวดำ,🦨สกั๊งค์หมอกดำ,👻ผีเงาเฒ่า,😈จ้าวมืด","-t--r--n-l-x"]};
+fire:["🦊จิ้งจอกถ่าน,🐯เสือเตา,🦎กิ้งก่าไฟ,🐓ไก่เพลิง,🐕หมาเถ้า,🐒ลิงควัน,🐖หมูย่าง,🦁สิงห์ลาวา,🐂วัวเพลิง,🐎ม้าเปลวเพลิง,🦂แมงป่องร้อน,🐉มังกรแดง,🦖ไดโนภูเขาไฟ","-r-gs--x-lkxn"],
+water:["🐟ปลาฟอง,🐢เต่าธาร,🦀ปูกรรไกร,🐸กบฝน,🦐กุ้งจิ๋ว,🐠ปลาการ์ตูน,🦆เป็ดบึง,🐙หมึกยักษ์,🦈ฉลามคลื่น,🐬โลมาเกลียวคลื่น,🦦นากธาร,🐋วาฬคลื่น,🦑หมึกพายุ","--s-kr-t-x-sl"],
+leaf:["🐛หนอนใบ,🐰กระต่ายหญ้า,🐌หอยทากมอส,🦗จิ้งหรีดใบ,🐞เต่าทองดอก,🦋ผีเสื้อละออง,🐹แฮมสเตอร์ถั่ว,🦌กวางป่า,🦥สลอธมอส,🦘จิงโจ้เถาวัลย์,🐼แพนด้าไผ่,🦕ไดโนป่า,🦧ลิงผู้พิทักษ์","-l--rgn-s-tlx"],
+elec:["🐝ผึ้งสปาร์ก,🐭หนูแรงดัน,🦇ค้างคาวคลื่น,🐈แมวไฟสถิต,🦔เม่นประจุ,🦟ยุงช็อต,🐤เจี๊ยบไฟช็อต,🦅นกฟ้าผ่า,🐺หมาป่าสายฟ้า,🦓ม้าลายเส้นไฟ,🦒ยีราฟล่อฟ้า,🦄ยูนิคอร์นสายฟ้า,🐲มังกรพายุ","--t-ks-x-l-nx"],
+earth:["🐜มดดิน,🐗หมูป่าหิน,🦎กิ้งก่าโคลน,🦡แบดเจอร์ถ้ำ,🐀หนูขุดดิน,🐪อูฐทราย,🦏แรดผา,🐃ควายนา,🐄วัวผา,🐻หมีถ้ำ,🐘ช้างภูเขา,🐫อูฐเทพทะเลทราย","-s--rgt-x-sl"],
+ice:["🐧เพนกวินจิ๋ว,🐇กระต่ายหิมะ,🦢หงส์ผลึก,🐑แกะขนฝอย,🐐แพะหน้าผา,🦉นกฮูกน้ำค้าง,🐩พุดเดิ้ลน้ำค้างแข็ง,🦙ลามะขนเยือก,🦃ไก่งวงเหมันต์,🦛ฮิปโปเยือก,🐳วาฬน้ำแข็ง,🐊จระเข้เหมันต์","--n-s-gk-x-t"],
+wind:["🐦นกจิ๊บลม,🦜นกแก้วพายุ,🐥เจี๊ยบกระโชก,🦩ฟลามิงโกเหินลม,🐴ม้าน้อยลม,🐔ไก่ลมหมุน,🐆เสือดาวพายุ,🐅เสือลมกรด,🕊️นกพิราบสายลม,🐿️กระรอกร่อน,🦅อินทรีทะเลทราย,🦚นกยูงเฮอริเคน","-x--l-sg-t-n"],
+dark:["🕷️แมงมุมเงา,🐍งูราตรี,🦇ค้างคาวมืด,🐀หนูท่อ,🦉นกฮูกราตรี,🦂แมงป่องดำ,🐺หมาป่าเงา,🦝แรคคูนจอมขโมย,🐈แมวดำ,🦨สกั๊งค์หมอกดำ,👻ผีเงาเฒ่า,😈จ้าวมืด","-k--r-gn-l-x"]};
 const PC=[2,3,3,4,2,3,4],PR=[4,5,5,6],PL=[7,8];
 const C=[];
 EK.forEach(e=>{const L=D[e][0].split(","),pat=D[e][1],nc=L.length-6;
  L.forEach((s,k)=>{const m=s.match(/^\P{L}+/u)[0],r=k<nc?"C":k<nc+4?"R":"L",a=pat[k]==="-"?"":pat[k];
   let p=r==="C"?PC[k]:r==="R"?PR[k-nc]:PL[k-nc-4];if(a&&r!=="L")p=Math.max(1,p-1);
   C.push({id:C.length,m,n:s.slice(m.length),e,r,p,a})})});
-function duel(a,b){const A=C[a],B=C[b];let x=A.p,y=B.p,bx=0,by=0;
- if(A.a!=="n"&&B.a!=="n"){if(BEAT[A.e].includes(B.e)&&B.a!=="s")bx=A.a==="x"?4:2;if(BEAT[B.e].includes(A.e)&&A.a!=="s")by=B.a==="x"?4:2}
- x+=bx;y+=by;const w=x>y?1:y>x?-1:(A.a==="t"&&B.a!=="t"?1:B.a==="t"&&A.a!=="t"?-1:0);return{x,y,w,bx,by}}
+// ตัดสิน 1 รอบ (มุมมองของ a) · sa/sb = แต้มสะสมก่อนรอบนี้
+function duel(a,b,sa=0,sb=0){const A=C[a],B=C[b];let ea=A.a,eb=B.a;
+ if(ea==="k"&&eb==="k")ea=eb="";else if(ea==="k")eb="";else if(eb==="k")ea="";
+ let x=A.p,y=B.p,bx=0,by=0,gx=0,gy=0;
+ if(ea!=="n"&&eb!=="n"){if(BEAT[A.e].includes(B.e)&&eb!=="s")bx=ea==="x"?4:2;if(BEAT[B.e].includes(A.e)&&ea!=="s")by=eb==="x"?4:2}
+ if(ea==="g"&&sa<sb)gx=2;if(eb==="g"&&sb<sa)gy=2;
+ x+=bx+gx;y+=by+gy;
+ const w=x>y?1:y>x?-1:(ea==="t"&&eb!=="t"?1:eb==="t"&&ea!=="t"?-1:0);
+ return{x,y,w,bx,by,gx,gy,ea,eb}}
+function rounds(P,Q){const d=Math.min(P.picks.length,Q.picks.length),o=[];let sp=0,sq=0;
+ for(let i=0;i<d;i++){const r=duel(P.picks[i],Q.picks[i],sp,sq);o.push(r);if(r.w>0)sp++;else if(r.w<0)sq++}return o}
 // ---- ข้อมูลผู้เล่น
-let S={coins:100,inv:{},deck:[]};
+let S={coins:100,inv:{},deck:[],snd:true,seen:false};
 try{Object.assign(S,JSON.parse(localStorage.getItem("mc2")||"{}"))}catch(e){}
 const sv=()=>{try{localStorage.setItem("mc2",JSON.stringify(S))}catch(e){}};
 const rnd=a=>a[Math.floor(Math.random()*a.length)];
@@ -85,10 +119,9 @@ const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math
 function one(g){const r=Math.random();let t=r<.7?"C":r<.95?"R":"L";if(g&&t==="C")t=Math.random()<.85?"R":"L";return rnd(C.filter(c=>c.r===t)).id}
 const ten=()=>[...Array(10)].map((_,i)=>one(i===9));
 function openPack(){const p=ten();p.forEach(i=>S.inv[i]=(S.inv[i]||0)+1);sv();return p}
-let st={tab:"play",nm:"",jc:"",flt:"all",pack:null,sel:-1,msg:"",help:"",view:-1,p2p:"",out:"",cin:""};
+let st={tab:"play",nm:"",flt:"all",pack:null,newIds:[],packAnim:false,sel:-1,msg:"",help:"",view:-1,p2p:"",out:"",cin:"",conn:"",busy:0,tut:false,flipDone:0,dealt:false,confDone:0,rm:false,orm:false,coinBump:0};
 const dcnt=id=>S.deck.filter(x=>x===id).length;
-const PACK=100;
-const BUD=18,CST={C:1,R:2,L:3},MAXC=3;
+const PACK=100,BUD=18,CST={C:1,R:2,L:3},MAXC=3;
 const dcost=d=>d.reduce((t,i)=>t+CST[C[i].r],0);
 const canAdd=(id,d=S.deck)=>d.length<10&&d.filter(x=>x===id).length<Math.min(MAXC,S.inv[id]||0)&&dcost(d)+CST[C[id].r]+(9-d.length)<=BUD;
 const deckOk=()=>S.deck.length===10&&dcost(S.deck)<=BUD&&S.deck.every(i=>dcnt(i)<=Math.min(MAXC,S.inv[i]||0));
@@ -96,144 +129,193 @@ function build(pref){const pool=[];Object.entries(S.inv).forEach(([i,n])=>{for(l
  const key=i=>(pref.includes(i)?1000:0)+C[i].p,d=[];
  pool.sort((a,b)=>key(b)-key(a)||b-a).forEach(i=>{if(canAdd(i,d))d.push(i)});return d}
 if(!Object.keys(S.inv).length){let p;do{S.inv={};p=openPack();S.deck=build(p)}while(!deckOk());sv();st.msg="🎁 ได้ซองต้อนรับฟรี 10 ใบ ใช้เป็นเด็คเริ่มต้นให้แล้ว!"}
+// ---- เสียง / แจ้งเตือน
+let AC=null;
+function snd(k){if(!S.snd)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();
+ const T={pick:[[660,.06]],play:[[440,.08],[660,.1]],flip:[[520,.07]],win:[[523,.1],[659,.1],[784,.2]],lose:[[330,.12],[247,.22]],rare:[[660,.08],[880,.12]],legend:[[523,.08],[659,.08],[784,.08],[1047,.28]],coin:[[988,.06],[1319,.12]]}[k]||[];
+ let t=AC.currentTime;T.forEach(([f,d])=>{const o=AC.createOscillator(),g=AC.createGain();o.type="triangle";o.frequency.value=f;g.gain.setValueAtTime(.06,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d);t+=d*.9})}catch(e){}}
+function toast(t){const e=$("#toast");if(!e)return;e.textContent=t;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("show"),2800)}
+function fb(t){const x=document.createElement("textarea");x.value=t;document.body.appendChild(x);x.select();try{document.execCommand("copy");toast("คัดลอกแล้ว ✅")}catch(e){toast("คัดลอกไม่ได้ ลองกดค้างที่ข้อความ")}x.remove()}
+function copy(t){try{navigator.clipboard.writeText(t).then(()=>toast("คัดลอกแล้ว ✅"),()=>fb(t))}catch(e){fb(t)}}
 // ---- การ์ด
-function cardH(id,x="",n=0){const c=C[id];return `<div class="card ${c.r} ${x}" style="background:${TINT[c.e]}" data-id="${id}" title="${c.n}"><i class="p">${c.p}</i>${c.a?`<i class="ab">${AB[c.a][0]}</i>`:""}<div class="em">${c.m}</div><b>${EM[c.e]}${c.n}</b>${n?`<span class="n">×${n}</span>`:""}</div>`}
+function cardH(id,x="",n=0,d=0,ex=""){const c=C[id];return `<div class="card ${c.r} ${x}" style="background:${TINT[c.e]};--d:${d}s" data-id="${id}" ${ex} title="${c.n}"><i class="p">${c.p}</i>${c.a?`<i class="ab">${AB[c.a][0]}</i>`:""}<div class="em">${c.m}</div><b>${EM[c.e]}${c.n}</b>${n?`<span class="n">×${n}</span>`:""}</div>`}
 function info(id){const c=C[id],b=BEAT[c.e];return `<b>${c.m} ${c.n}</b> · ${EM[c.e]}${EN[c.e]} · ${RN[c.r]} · พลัง ${c.p}${c.a?`<br>${AB[c.a][0]} <b>${AB[c.a][1]}</b>: ${AB[c.a][2]}`:""}<br><small>ชนะ ${b.map(x=>EM[x]).join("")} · แพ้ ${EK.filter(k=>BEAT[k].includes(c.e)).map(x=>EM[x]).join("")}</small>`}
-// ---- เกม
-let bot=false,ref=null,uid=null,db=null,opp=null,mine=null,paid=false;
+// ---- แมตช์
+let bot=false,opp=null,mine=null,paid=false,pc=null,dc=null,p2p=false;
+function newMatch(){paid=false;st.flipDone=0;st.dealt=false;st.confDone=0;st.sel=-1;st.rm=false;st.orm=false;st.help="";st.view=-1;st.tab="game"}
 function fromDeck(){const d=shuf(S.deck);return{name:st.nm.trim()||"ผู้เล่น",hand:d.slice(0,5),deck:d.slice(5),picks:[],drawn:[]}}
-function settle(P,Q){let ch=false;const d=Math.min(P.picks.length,Q.picks.length);
- for(let i=0;i<d;i++)if(!P.drawn.includes(i)){P.drawn.push(i);ch=true;
-  if(duel(P.picks[i],Q.picks[i]).w>0){let n=C[P.picks[i]].a==="l"?2:1;while(n--&&P.deck.length)P.hand.push(P.deck.shift())}}
- return ch}
-function startBot(){bot=true;paid=false;mine=fromDeck();let t10;do{t10=ten()}while(dcost(t10)>BUD);const d=shuf(t10);
- opp={name:"บอทมอน 🤖",hand:d.slice(0,5),deck:d.slice(5),picks:[],drawn:[]};st.tab="game";st.sel=-1;R()}
-function join(c){const code=c.toUpperCase();bot=false;paid=false;mine=fromDeck();st.code=code;st.tab="game";st.sel=-1;
- ref=db.collection("games/"+code+"/players");
- ref.onSnapshot(snap=>{const ds=snap.docs,o=ds.find(d=>d.id!==uid);
-  if(!ds.some(d=>d.id===uid)&&ds.length>=2){st.msg="ห้องเต็มแล้ว";return}
-  opp=o?o.data():null;R()},e=>{st.msg="เชื่อมต่อไม่ได้: "+e.message;R()});
- save();R()}
-const save=()=>bot?botTurn():p2p?(dc&&dc.readyState==="open"&&dc.send(JSON.stringify(mine))):ref.doc(uid).set(mine).catch(()=>{st.msg="บันทึกไม่ได้ (ต้องมีสิทธิ์ Contributor)";R()});
-let pc=null,dc=null,p2p=false;
-const ICE={iceServers:[{urls:"stun:stun.l.google.com:19302"}]};
-const enc=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o))));
-const dec=t=>JSON.parse(decodeURIComponent(escape(atob(t.replace(/\s/g,"")))));
-const gathered=c=>new Promise(r=>{if(c.iceGatheringState==="complete")return r();c.onicegatheringstatechange=()=>c.iceGatheringState==="complete"&&r();setTimeout(r,5000)});
-function wire(ch){dc=ch;ch.onopen=enterP2P;ch.onmessage=e=>{try{opp=JSON.parse(e.data)}catch(x){return}enterP2P();R()};ch.onclose=()=>{st.msg="การเชื่อมต่อหลุด";R()}}
-function enterP2P(){if(p2p)return;p2p=true;bot=false;paid=false;mine=fromDeck();st.tab="game";st.sel=-1;R();dc.send(JSON.stringify(mine))}
-async function p2pHost(){st.p2p="host";st.out="";st.cin="";R();try{pc=new RTCPeerConnection(ICE);wire(pc.createDataChannel("g"));
- await pc.setLocalDescription(await pc.createOffer());await gathered(pc);st.out=enc(pc.localDescription)}catch(e){st.msg="สร้างโค้ดไม่ได้: "+e.message}R()}
-async function p2pAns(){try{pc=new RTCPeerConnection(ICE);pc.ondatachannel=e=>wire(e.channel);
- await pc.setRemoteDescription(dec(st.cin));await pc.setLocalDescription(await pc.createAnswer());await gathered(pc);st.out=enc(pc.localDescription)}catch(e){st.msg="โค้ดไม่ถูกต้อง: "+e.message}R()}
-async function p2pGo(){try{await pc.setRemoteDescription(dec(st.cin));st.msg="กำลังเชื่อมต่อ… เกมจะเริ่มเอง"}catch(e){st.msg="โค้ดไม่ถูกต้อง: "+e.message}R()}
-function p2pH(ok){let h=`<div class="box"><b>🌐 เล่นกับเพื่อน (ไม่ต้องล็อกอิน)</b><br><small>แค่ส่งลิงก์เกมนี้ให้เพื่อน แล้วแลกโค้ดกันทางแชต 2 ครั้ง</small><div class="row" style="margin:8px 0"><button data-act="p2phost" ${ok?"":"disabled"}>🏠 สร้างห้อง</button><button data-act="p2pguest" ${ok?"":"disabled"}>🙋 ฉันเป็นเพื่อน (เข้าห้อง)</button></div>`;
- const ta=(id,v,ro)=>`<textarea id="${id}" ${ro?"readonly":""} rows="3" style="width:100%;font-size:11px;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:10px">${esc(v||"")}</textarea>`;
- if(st.p2p==="host")h+=`<b>ขั้น 1</b> ส่งโค้ดนี้ให้เพื่อน${ta("out",st.out||"กำลังสร้างโค้ด…",1)}<button data-act="copy">📋 คัดลอก</button><br><b>ขั้น 2</b> วางโค้ดตอบกลับจากเพื่อน${ta("cin",st.cin)}<button data-act="p2pgo">เชื่อมต่อ</button>`;
- if(st.p2p==="guest"){h+=`<b>ขั้น 1</b> วางโค้ดจากเจ้าของห้อง${ta("cin",st.cin)}<button data-act="p2pans">สร้างโค้ดตอบกลับ</button>`;
-  if(st.out)h+=`<br><b>ขั้น 2</b> ส่งโค้ดนี้กลับให้เจ้าของห้อง${ta("out",st.out,1)}<button data-act="copy">📋 คัดลอก</button><br><small>รอเจ้าของห้องกด “เชื่อมต่อ” เกมจะเริ่มเอง</small>`}
- return h+"</div>"}
+function settle(P,Q){let ch=false;const rs=rounds(P,Q);
+ rs.forEach((r,i)=>{if(!P.drawn.includes(i)){P.drawn.push(i);ch=true;
+  if(r.w>0){let n=r.ea==="l"?2:1;while(n--&&P.deck.length)P.hand.push(P.deck.shift())}}});return ch}
+function startBot(){newMatch();bot=true;p2p=false;mine=fromDeck();let t10;do{t10=ten()}while(dcost(t10)>BUD);const d=shuf(t10);
+ opp={name:"บอทมอน 🤖",hand:d.slice(0,5),deck:d.slice(5),picks:[],drawn:[]};R()}
 function botTurn(){if(opp.picks.length>=mine.picks.length)return;
  setTimeout(()=>{if(opp.picks.length>=mine.picks.length)return;
   const h=opp.hand,w=h.map(i=>C[i].p+Math.random()*3),k=w.indexOf(Math.max(...w));
   opp.picks.push(h.splice(k,1)[0]);settle(opp,mine);R()},900)}
-const note=(a,b,r)=>{const n=[];if(a.a==="n"||b.a==="n")n.push("🌀 ล้างธาตุ: ไม่มีโบนัสธาตุ");
- [[a,b],[b,a]].forEach(([p,q])=>{if(p.a==="s"&&BEAT[q.e].includes(p.e)&&q.a!=="n")n.push(`🛡️ ${p.n} กันโบนัสธาตุของ ${q.n}`)});
- if(r.x===r.y&&r.w)n.push("🎯 คู่ขาด: พลังเท่ากัน ฝ่ายที่มีความสามารถชนะ");
- if(r.w>0&&a.a==="l")n.push("🍀 จั่วเพิ่ม 2 ใบ");if(r.w>0&&a.a==="r")n.push("💰 ได้ 🪙+10");
+// ---- เล่นกับเพื่อน (WebRTC แลกโค้ด / ลิงก์เชิญ)
+const ICE={iceServers:[{urls:"stun:stun.l.google.com:19302"},{urls:"stun:stun.cloudflare.com:3478"}]};
+const b64=u=>btoa(String.fromCharCode(...u)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+const ub64=s=>Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")),c=>c.charCodeAt(0));
+async function zip(str){const u=new TextEncoder().encode(str);
+ if(window.CompressionStream)return "z"+b64(new Uint8Array(await new Response(new Blob([u]).stream().pipeThrough(new CompressionStream("deflate-raw"))).arrayBuffer()));
+ return "p"+b64(u)}
+async function unzip(c){c=c.trim();if(c.includes("j="))c=c.split("j=").pop();c=c.replace(/\s/g,"");const u=ub64(c.slice(1));
+ if(c[0]==="z")return new TextDecoder().decode(await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer());
+ return new TextDecoder().decode(u)}
+const gathered=c=>new Promise(r=>{if(c.iceGatheringState==="complete")return r();
+ const f=()=>{if(c.iceGatheringState==="complete"){c.removeEventListener("icegatheringstatechange",f);r()}};c.addEventListener("icegatheringstatechange",f);setTimeout(r,2500)});
+const link=()=>location.href.split("#")[0]+"#j="+st.out;
+const send=o=>{try{dc&&dc.readyState==="open"&&dc.send(JSON.stringify(o))}catch(e){}};
+const save=()=>bot?botTurn():p2p?send({t:"s",d:mine}):0;
+function mkpc(){pc=new RTCPeerConnection(ICE);pc.onconnectionstatechange=()=>{const s=pc.connectionState;
+ if(s==="connected")st.conn="open";
+ else if(s==="failed"){st.conn="failed";st.msg="เชื่อมต่อไม่สำเร็จ — ลองสลับเครือข่าย (เช่น ใช้เน็ตมือถือ)"}
+ else if((s==="disconnected"||s==="closed")&&p2p)st.conn="lost";R()}}
+function wire(ch){dc=ch;ch.onopen=enterP2P;
+ ch.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch(x){return}
+  if(m.t==="s"){opp=m.d;enterP2P();R()}
+  if(m.t==="rm"){st.orm=true;checkRm()}};
+ ch.onclose=()=>{if(p2p){st.conn="lost";R()}}}
+function enterP2P(){if(p2p)return;p2p=true;bot=false;newMatch();mine=fromDeck();st.conn="open";R();save()}
+function checkRm(){if(st.rm&&st.orm){newMatch();mine=fromDeck();opp=null;save();R()}}
+async function p2pHost(){st.p2p="host";st.out="";st.cin="";st.conn="gen";R();
+ try{mkpc();wire(pc.createDataChannel("g"));await pc.setLocalDescription(await pc.createOffer());await gathered(pc);st.out=await zip(JSON.stringify(pc.localDescription));st.conn="wait"}
+ catch(e){st.conn="failed";st.msg="สร้างโค้ดไม่ได้: "+e.message}R()}
+async function p2pAns(){if(st.busy)return;st.busy=1;st.conn="gen";R();
+ try{const o=JSON.parse(await unzip(st.cin));mkpc();pc.ondatachannel=e=>wire(e.channel);await pc.setRemoteDescription(o);await pc.setLocalDescription(await pc.createAnswer());await gathered(pc);st.out=await zip(JSON.stringify(pc.localDescription));st.conn="wait"}
+ catch(e){st.conn="";st.msg="โค้ดไม่ถูกต้อง: "+e.message}st.busy=0;R()}
+async function p2pGo(){if(st.busy||!pc)return;st.busy=1;
+ try{await pc.setRemoteDescription(JSON.parse(await unzip(st.cin)));st.conn="connecting"}catch(e){st.msg="โค้ดไม่ถูกต้อง: "+e.message}st.busy=0;R()}
+function p2pCancel(){try{pc&&pc.close()}catch(e){}pc=dc=null;st.p2p="";st.out="";st.cin="";st.conn="";st.busy=0;R()}
+const ST={gen:"⏳ กำลังสร้างโค้ด… (ไม่กี่วินาที)",wait:"⌛ รอเพื่อน…",connecting:"🔌 กำลังเชื่อมต่อ…",open:"✅ เชื่อมต่อแล้ว",failed:"❌ เชื่อมต่อไม่สำเร็จ ลองสลับเครือข่าย",lost:"⚠️ การเชื่อมต่อหลุด"};
+const ta=(id,v,ro)=>`<textarea id="${id}" ${ro?"readonly":""} rows="2" onfocus="this.select()">${esc(v||"")}</textarea>`;
+function p2pH(ok){let h=`<div class="box"><b>🌐 เล่นกับเพื่อน</b> <small>ไม่ต้องล็อกอิน</small>`;
+ if(!st.p2p)h+=`<p><small>สร้างห้อง → ส่งลิงก์เชิญให้เพื่อน → เพื่อนเปิดลิงก์แล้วส่งโค้ดตอบกลับมาให้คุณ</small></p><div class="row"><button data-act="p2phost" ${ok?"":"disabled"}>🏠 สร้างห้อง</button><button data-act="p2pguest" ${ok?"":"disabled"}>🙋 ฉันเป็นเพื่อน</button></div>`;
+ else{const s=st.conn?`<p>${ST[st.conn]||""}</p>`:"";
+  if(st.p2p==="host")h+=`<ol class="steps"><li><b>ส่งลิงก์เชิญให้เพื่อน</b>${st.out?`${ta("out",link(),1)}<div class="row"><button data-act="copylink">📋 คัดลอกลิงก์</button><button data-act="copycode">📋 เฉพาะโค้ด</button></div>`:"<br><small>กำลังสร้าง…</small>"}</li><li><b>วางโค้ดตอบกลับของเพื่อน</b> <small>(เชื่อมต่ออัตโนมัติ)</small>${ta("cin",st.cin)}</li></ol>${s}`;
+  else h+=`<ol class="steps">${st.out?"":`<li><b>วางลิงก์/โค้ดจากเจ้าของห้อง</b> <small>(ถ้าเปิดจากลิงก์เชิญ ระบบทำให้เอง)</small>${ta("cin",st.cin)}</li>`}${st.out?`<li><b>ส่งโค้ดนี้กลับให้เจ้าของห้อง</b>${ta("out",st.out,1)}<button data-act="copycode">📋 คัดลอกโค้ด</button><br><small>จากนั้นรอเจ้าของห้องวางโค้ด เกมจะเริ่มเอง</small></li>`:""}</ol>${s}`;
+  h+=`<button class="sm" data-act="p2pcancel">ยกเลิก</button>`}
+ return h+"</div>"}
+// ---- หน้าจอสู้
+const note=(a,b,r)=>{const n=[];
+ if(r.ea==="n"||r.eb==="n")n.push("🌀 ล้างธาตุ: ไม่มีโบนัสธาตุ");
+ [[a,r.ea,b,r.eb],[b,r.eb,a,r.ea]].forEach(([p,pe,q,qe])=>{
+  if(p.a&&pe!==p.a)n.push(`🔇 ความสามารถของ ${p.n} ถูกปิดผนึก`);
+  if(pe==="s"&&BEAT[q.e].includes(p.e)&&qe!=="n")n.push(`🛡️ ${p.n} กันโบนัสธาตุ`)});
+ if(r.gx)n.push("💪 เราสู้คืน +2");if(r.gy)n.push("💪 ฝั่งตรงข้ามสู้คืน +2");
+ if(r.x===r.y&&r.w)n.push("🎯 คู่ขาดตัดสินเสมอ");
+ if(r.w>0&&r.ea==="l")n.push("🍀 จั่วเพิ่ม 2 ใบ");if(r.w>0&&r.ea==="r")n.push("💰 ได้ 🪙+10");
  return n.length?`<br><small>${n.join(" · ")}</small>`:""};
 function helpH(){const B=(k,t)=>`<button data-help="${k}" class="${st.help===k?"on":""}">${t}</button>`;
  let h=`<div class="row chips" style="margin:8px 0">${B("elem","📖 ธาตุแพ้ชนะ")}${B("abil","📖 ความสามารถ")}${B("rule","📖 กติกา")}</div>`;
- if(st.help==="elem")h+=`<div class="box"><b>ธาตุชนะทาง = ได้พลัง +2</b> <small>(⚔️เจาะธาตุ = +4) · ทุกธาตุชนะ 3 แพ้ 3 เสมอ 1</small><br><small>${EK.map(e=>{const l=EK.filter(k=>BEAT[k].includes(e)),t=EK.find(k=>k!==e&&!BEAT[k].includes(e)&&!BEAT[e].includes(k));return `<b>${EM[e]}${EN[e]}</b> ชนะ ${BEAT[e].map(x=>EM[x]).join("")} · แพ้ ${l.map(x=>EM[x]).join("")} · เสมอ ${EM[t]}<br>&nbsp;&nbsp;<i>${WHY[e]}</i>`}).join("<br>")}</small></div>`;
- if(st.help==="abil")h+=`<div class="box"><b>ความสามารถการ์ด</b> <small>(การ์ดที่มีความสามารถ พลังลด 1 ยกเว้นระดับตำนาน)</small><br>${Object.values(AB).map(v=>`<b>${v[0]} ${v[1]}</b> — ${v[2]}`).join("<br>")}</div>`;
- if(st.help==="rule")h+=`<div class="box">1) เลือกการ์ด 1 ใบ แล้วกดลงการ์ด เปิดพร้อมกัน<br>2) พลังรวม (พลัง + โบนัสธาตุ) สูงกว่าได้ 1 แต้ม เท่ากัน = ไม่มีแต้ม<br>3) ผู้ชนะรอบจั่วการ์ดจากเด็ค 1 ใบ<br>4) ได้ 3 แต้มก่อนชนะ · ครบ 5 รอบดูแต้มมากกว่า<br><small>เคล็ดลับ: แตะการ์ดในสนามเพื่อดูรายละเอียด</small></div>`;
- if(st.view>=0)h+=`<div class="box">${info(st.view)}<br><button data-act="closeview" style="margin-top:6px">ปิด</button></div>`;
+ if(st.help==="elem")h+=`<div class="box pop"><b>ธาตุชนะทาง = ได้พลัง +2</b> <small>(⚔️เจาะธาตุ = +4) · ทุกธาตุชนะ 3 แพ้ 3 เสมอ 1</small><br><small>${EK.map(e=>{const l=EK.filter(k=>BEAT[k].includes(e)),t=EK.find(k=>k!==e&&!BEAT[k].includes(e)&&!BEAT[e].includes(k));return `<b>${EM[e]}${EN[e]}</b> ชนะ ${BEAT[e].map(x=>EM[x]).join("")} · แพ้ ${l.map(x=>EM[x]).join("")} · เสมอ ${EM[t]}<br>&nbsp;&nbsp;<i>${WHY[e]}</i>`}).join("<br>")}</small></div>`;
+ if(st.help==="abil")h+=`<div class="box pop"><b>ความสามารถการ์ด</b> <small>(พลังลด 1 ยกเว้นระดับตำนาน)</small><br>${Object.values(AB).map(v=>`<b>${v[0]} ${v[1]}</b> — ${v[2]}`).join("<br>")}</div>`;
+ if(st.help==="rule")h+=`<div class="box pop">1) เลือกการ์ด 1 ใบ แล้วกดลงการ์ด เปิดพร้อมกัน<br>2) พลังรวม (พลัง + โบนัสธาตุ) สูงกว่าได้ 1 แต้ม เท่ากัน = ไม่มีแต้ม<br>3) ผู้ชนะรอบจั่วการ์ดจากเด็ค 1 ใบ<br>4) ได้ 3 แต้มก่อนชนะ · ครบ 5 รอบดูแต้มมากกว่า<br><small>เคล็ดลับ: แตะการ์ดในสนามหรือในมือเพื่อดูรายละเอียด</small></div>`;
+ if(st.view>=0)h+=`<div class="box pop">${info(st.view)}<br><button class="sm" data-act="closeview" style="margin-top:6px">ปิด</button></div>`;
  return h}
+const confetti=()=>`<div class="confetti">${[...Array(18)].map((_,i)=>`<i style="left:${(i*37)%100}%;animation-delay:${(i%6)*.25}s">${["🎉","⭐","🍓","✨","🍮","💖"][i%6]}</i>`).join("")}</div>`;
+const handH=can=>`<div class="hand">${mine.hand.map((id,i)=>cardH(id,(can?"pick ":"")+(i===st.sel?"sel ":"")+(st.dealt?"":"deal"),0,i*.07,`data-i="${i}"`)).join("")}</div><small>เด็คเหลือจั่ว ${mine.deck.length} ใบ</small>`;
 function gameH(){
- if(!opp)return `<div class="box big">ห้อง <b style="font-size:28px;letter-spacing:4px">${st.code}</b><br><small>ส่งรหัสนี้ให้เพื่อน แล้วรอเขาเข้าห้อง…</small></div>`+handH(false);
+ if(!opp)return `<div class="box big">⏳ รอเพื่อนพร้อม…</div>`;
  if(settle(mine,opp))save();
- const done=Math.min(mine.picks.length,opp.picks.length);
- let me=0,op=0,rich=0;const rs=[];
- for(let i=0;i<done;i++){const r=duel(mine.picks[i],opp.picks[i]);rs.push(r);if(r.w>0){me++;if(C[mine.picks[i]].a==="r")rich++}else if(r.w<0)op++}
- const over=me>=3||op>=3||done>=5,picked=mine.picks.length>done;
- let h=`<div class="box score"><span>${esc(mine.name)}: ${me}</span><span>${esc(opp.name)}: ${op}</span></div>${helpH()}<div class="field">`;
- for(let i=0;i<5;i++){let o,m,rs_="";
-  if(i<done){o=cardH(opp.picks[i]);m=cardH(mine.picks[i]);rs_=rs[i].w>0?"✅":rs[i].w<0?"❌":"🤝"}
-  else if(i===done&&!over){o=opp.picks.length>i?'<div class="slot now">🂠</div>':'<div class="slot now">…</div>';
-   m=picked?cardH(mine.picks[i]):st.sel>=0?cardH(mine.hand[st.sel],"sel"):'<div class="slot now">ลงการ์ด</div>'}
-  else{o=m='<div class="slot">·</div>'}
-  h+=`<div class="col">${o}<div class="res">${rs_}</div>${m}</div>`}
+ const rs=rounds(mine,opp),done=rs.length;let me=0,op=0,rich=0;
+ rs.forEach(r=>{if(r.w>0){me++;if(r.ea==="r")rich++}else if(r.w<0)op++});
+ const over=me>=3||op>=3||done>=5,picked=mine.picks.length>done,fresh=st.flipDone<done;
+ const pips=n=>"●".repeat(Math.min(n,3))+"○".repeat(3-Math.min(n,3));
+ let h=`${!bot&&st.conn==="lost"&&!over?`<div class="box warn">⚠️ เพื่อนหลุดการเชื่อมต่อ <button class="sm" data-act="home">ออก</button></div>`:""}<div class="bar"><div class="pl"><b>${esc(mine.name)}</b><br><span class="pips">${pips(me)}</span></div><div class="mid">รอบ ${Math.min(done+1,5)}/5</div><div class="pl r"><b>${esc(opp.name)}</b><br><span class="pips">${pips(op)}</span><br><small>มือ ${opp.hand.length} · เด็ค ${opp.deck.length}</small></div></div>${helpH()}<div class="field">`;
+ for(let i=0;i<5;i++){let o,m,r_="";
+  if(i<done){const r=rs[i],nw=i===done-1&&fresh,cl=w=>(nw?"flip ":"")+(w>0?"win":w<0?"lose":"");
+   o=cardH(opp.picks[i],cl(-r.w));m=cardH(mine.picks[i],cl(r.w));r_=r.w>0?"✅":r.w<0?"❌":"🤝"}
+  else if(i===done&&!over){o=opp.picks.length>i?'<div class="cback">🂠</div>':'<div class="slot now">…</div>';
+   m=picked?cardH(mine.picks[i],"sel"):st.sel>=0?cardH(mine.hand[st.sel],"sel"):'<div class="slot now">ลงการ์ด</div>'}
+  else o=m='<div class="slot">·</div>';
+  h+=`<div class="col">${o}<div class="res">${r_}</div>${m}</div>`}
  h+="</div>";
  if(done){const r=rs[done-1],a=C[mine.picks[done-1]],b=C[opp.picks[done-1]];
-  h+=`<div class="box" style="margin-top:10px"><b>รอบที่ ${done}:</b> ${a.m} ${a.n} พลัง ${a.p}${r.bx?` + ธาตุ ${r.bx}`:""} = <b>${r.x}</b> VS ${b.m} ${b.n} พลัง ${b.p}${r.by?` + ธาตุ ${r.by}`:""} = <b>${r.y}</b> — ${r.w>0?"ชนะ! 🎉":r.w<0?"แพ้รอบนี้ 😢":"เสมอ 🤝"}${note(a,b,r)}</div>`}
+  if(fresh){st.flipDone=done;snd(r.w>0?"win":r.w<0?"lose":"flip")}
+  h+=`<div class="box" style="margin-top:10px"><b>รอบที่ ${done}:</b> ${a.m} ${a.n} พลัง ${a.p}${r.bx?` +ธาตุ${r.bx}`:""}${r.gx?` +💪${r.gx}`:""} = <b>${r.x}</b> VS ${b.m} ${b.n} พลัง ${b.p}${r.by?` +ธาตุ${r.by}`:""}${r.gy?` +💪${r.gy}`:""} = <b>${r.y}</b> — ${r.w>0?"ชนะ! 🎉":r.w<0?"แพ้รอบนี้ 😢":"เสมอ 🤝"}${note(a,b,r)}</div>`}
  if(over){let g=me>op?40:me<op?15:25;g+=rich*10;
-  if(!paid){paid=true;S.coins+=g;sv()}
-  h+=`<div class="box big"><b>${me>op?"🏆 คุณชนะ!":me<op?"💔 คุณแพ้":"🤝 เสมอ"}</b><br>ได้รางวัล 🪙${g}${rich?` (รวมโบนัส 💰 ×${rich})`:""}<br><button onclick="location.reload()">กลับหน้าแรก</button></div>`}
- else{h+=`<div class="big">${picked?"ลงการ์ดแล้ว รอคู่ต่อสู้…":`รอบที่ ${done+1}/5 — แตะการ์ดเพื่อเลือก`}</div>`;
-  if(!picked&&st.sel>=0)h+=`<div class="box">${info(mine.hand[st.sel])}<div class="row" style="margin-top:8px"><button data-act="play">✔ ลงการ์ดใบนี้</button><button data-act="unsel">ยกเลิก</button></div></div>`;
-  h+=handH(!picked)}
+  if(!paid){paid=true;S.coins+=g;sv();st.coinBump=1;snd(me>op?"win":me<op?"lose":"coin")}
+  let cf="";if(me>op&&!st.confDone){st.confDone=1;cf=confetti()}
+  h+=`${cf}<div class="box big pop"><b style="font-size:24px">${me>op?"🏆 คุณชนะ!":me<op?"💔 คุณแพ้":"🤝 เสมอ"}</b><div class="reward">🪙 +${g}</div>${rich?`<small>(รวมโบนัส 💰 ×${rich})</small><br>`:""}<div class="row" style="justify-content:center;margin-top:8px"><button class="go" data-act="again">🔁 เล่นอีกครั้ง</button><button data-act="home">🏠 หน้าแรก</button></div></div>`}
+ else{h+=`<div class="big">${picked?"✅ ลงการ์ดแล้ว รอคู่ต่อสู้…":`รอบที่ ${done+1} — แตะการ์ดเพื่อเลือก`}</div>`+handH(!picked);
+  if(!picked&&st.sel>=0){const c=C[mine.hand[st.sel]];h+=`<div class="cbar"><div>${info(mine.hand[st.sel])}</div><div class="row"><button class="go" data-act="play">✔ ลงการ์ด</button><button data-act="unsel">✖</button></div></div>`}}
  return h}
-const handH=can=>`<div class="hand">${mine.hand.map((id,i)=>cardH(id,(can?"pick ":"")+(i===st.sel?"sel":""))).join("").replace(/data-id="(\d+)"/g,(m,x)=>m)}</div><small>เด็คเหลือจั่ว ${mine.deck.length} ใบ</small>`;
-// ---- หน้าจอ
-function R(){
- const a=$("#app");
- if(st.tab==="game"){a.innerHTML=(st.msg?`<p>${st.msg}</p>`:"")+gameH();
-  a.querySelectorAll(".hand .card").forEach((el,i)=>el.dataset.i=i);return}
- let h=`<div class="coin">🪙 ${S.coins} เหรียญ</div><div class="nav">${[["play","⚔️ เล่น"],["pack","🎁 เปิดซอง"],["deck","🃏 จัดเด็ค"]].map(([k,t])=>`<button data-tab="${k}" class="${st.tab===k?"on":""}">${t}</button>`).join("")}</div>`;
- if(st.msg){h+=`<div class="box">${st.msg}</div>`;st.msg=""}
+// ---- หน้าแรก
+const topH=()=>`<div class="top"><span class="coin ${st.coinBump?"bump":""}">🪙 ${S.coins}</span><span class="row"><button class="sm" data-act="snd">${S.snd?"🔊":"🔇"}</button><button class="sm" data-act="tut">❓</button></span></div>`;
+function tabH(){let h=`<div class="nav">${[["play","⚔️ เล่น"],["pack","🎁 เปิดซอง"],["deck","🃏 จัดเด็ค"]].map(([k,t])=>`<button data-tab="${k}" class="${st.tab===k?"on":""}">${t}</button>`).join("")}</div>`;
  if(st.tab==="play"){const ok=deckOk();
+  if(!S.seen||st.tut)h+=`<div class="box pop"><b>🎮 วิธีเล่น 3 ขั้น</b><ol><li>จัดเด็ค 10 ใบ (แท็บ “จัดเด็ค”) หรือเปิดซองหาการ์ดใหม่</li><li>เลือกการ์ดลงสนามทีละรอบ ธาตุชนะทางได้พลัง +2</li><li>ชนะรับเหรียญ 🪙 ไปเปิดซองเพิ่ม</li></ol><button data-act="seen">เข้าใจแล้ว ✔</button></div>`;
   h+=`<div class="box"><input id="nm" placeholder="ชื่อของคุณ" maxlength="12" value="${esc(st.nm)}">
   <p>เด็คของคุณ: <b>${S.deck.length}/10</b> · งบ <b>${dcost(S.deck)}/${BUD}</b> ${ok?"✅ พร้อมเล่น":"— ไปแท็บ “จัดเด็ค” ปรับให้ถูกกฎก่อน"}</p>
-  <button data-act="bot" ${ok?"":"disabled"}>🤖 เล่นกับบอท</button>
-  </div>${p2pH(ok)}
+  <button class="go" data-act="bot" ${ok?"":"disabled"}>🤖 เล่นกับบอท</button></div>${p2pH(ok)}
   <div class="box"><b>กติกา</b><ol>
   <li>เด็ค 10 ใบ จัดเองได้ · งบเด็ค 18 (ธรรมดา 1 · หายาก 2 · ตำนาน 3) · ซ้ำได้ไม่เกิน 3 ใบ/การ์ด · เริ่มมือ 5 ใบ</li>
   <li>ทุกรอบเลือกการ์ด 1 ใบ แล้วกด “ลงการ์ด” เปิดพร้อมกัน</li>
   <li>พลังสูงกว่าชนะ +1 แต้ม · ธาตุชนะทางได้โบนัส +2</li>
-  <li>ผู้ชนะรอบจั่วการ์ดจากเด็คเพิ่ม 1 ใบ · การ์ดมีความสามารถพิเศษ (🛡️⚔️🍀🎯🌀💰) พลังจะลด 1</li>
+  <li>ผู้ชนะรอบจั่วการ์ดจากเด็คเพิ่ม 1 ใบ · การ์ดที่มีความสามารถพิเศษพลังจะลด 1</li>
   <li>ใครได้ 3 แต้มก่อนชนะ (ครบ 5 รอบ ดูแต้มมากกว่า) · ชนะ +40🪙 เสมอ +25 แพ้ +15</li></ol>
   <b>ธาตุแพ้ชนะ</b> <small>(ชนะ 3 · แพ้ 3 · เสมอ 1)</small><br><small>${EK.map(e=>`${EM[e]}${EN[e]} ชนะ ${BEAT[e].map(x=>EM[x]).join("")} <i>(${WHY[e]})</i>`).join("<br>")}</small>
   <p><small>ความสามารถ: ${Object.values(AB).map(v=>`${v[0]}${v[1]} ${v[2]}`).join(" · ")}</small></p></div>`}
- if(st.tab==="pack"){h+=`<div class="box big">ซอง 10 ใบ ราคา 🪙${PACK}<br><small>ธรรมดา 70% · หายาก 25% · ตำนาน 5% (ใบสุดท้ายการันตีหายากขึ้นไป)</small><br><button data-act="open" ${S.coins>=PACK?"":"disabled"}>🎁 เปิดซอง</button></div>`;
-  if(st.pack)h+=`<div class="box"><b>ได้การ์ดใหม่ 10 ใบ</b><div class="grid" style="margin:8px 0">${st.pack.map(i=>cardH(i)).join("")}</div><div class="row"><button data-act="usepack">ใช้ 10 ใบนี้เป็นเด็คเลย</button><button data-tab="deck">ไปจัดเด็ค</button></div></div>`}
+ if(st.tab==="pack"){h+=`<div class="box big">ซอง 10 ใบ ราคา 🪙${PACK}<br><small>ธรรมดา 70% · หายาก 25% · ตำนาน 5% (ใบสุดท้ายการันตีหายากขึ้นไป)</small><br><button class="go" data-act="open" ${S.coins>=PACK?"":"disabled"}>🎁 เปิดซอง</button></div>`;
+  if(st.pack)h+=`<div class="box"><b>ได้การ์ดใหม่ 10 ใบ</b><div class="grid" style="margin:10px 0">${st.pack.map((i,k)=>cardH(i,(st.packAnim?"flip ":"")+(st.newIds.includes(i)?"nw":""),0,.25+k*.18)).join("")}</div><div class="row"><button data-act="usepack">ใช้ 10 ใบนี้เป็นเด็คเลย</button><button data-tab="deck">ไปจัดเด็ค</button></div></div>`}
  if(st.tab==="deck"){const tot=Object.values(S.inv).reduce((s,n)=>s+n,0),have=Object.keys(S.inv).length;
-  h+=`<div class="box"><b>เด็ค ${S.deck.length}/10</b> · งบ <b>${dcost(S.deck)}/${BUD}</b> <small>(ธรรมดา=1 หายาก=2 ตำนาน=3 · ซ้ำไม่เกิน 3 ใบ) แตะการ์ดในเด็คเพื่อเอาออก</small><div class="grid" style="margin:8px 0">${[...Array(10)].map((_,i)=>S.deck[i]!==undefined?cardH(S.deck[i],"rm"):'<div class="slot">+</div>').join("").replace(/class="card ([^"]*) rm"/g,(m,c)=>`class="card ${c} add" data-rm="1"`)}</div>
+  const ec=EK.map(e=>[e,S.deck.filter(i=>C[i].e===e).length]).filter(x=>x[1]).map(([e,n])=>`${EM[e]}×${n}`).join(" "),ap=S.deck.length?(S.deck.reduce((t,i)=>t+C[i].p,0)/S.deck.length).toFixed(1):"-";
+  h+=`<div class="box"><b>เด็ค ${S.deck.length}/10</b> · งบ <b>${dcost(S.deck)}/${BUD}</b> · พลังเฉลี่ย ${ap}<br><small>${ec||"ยังไม่มีการ์ด"} · (ธรรมดา=1 หายาก=2 ตำนาน=3 · ซ้ำไม่เกิน 3 ใบ) แตะการ์ดในเด็คเพื่อเอาออก</small><div class="grid" style="margin:8px 0">${[...Array(10)].map((_,i)=>S.deck[i]!==undefined?cardH(S.deck[i],"add",0,0,'data-rm="1"'):'<div class="slot">+</div>').join("")}</div>
   <div class="row"><button data-act="auto">⚡ เติมเด็คแรงสุด</button><button data-act="clr">ล้างเด็ค</button></div></div>
   <div class="box"><b>สมุดสะสม ${have}/${C.length}</b> <small>(${tot} ใบ) แตะเพื่อเพิ่มเข้าเด็ค</small>
   <div class="row chips" style="margin:8px 0"><button data-flt="all" class="${st.flt==="all"?"on":""}">ทั้งหมด</button>${EK.map(e=>`<button data-flt="${e}" class="${st.flt===e?"on":""}">${EM[e]}</button>`).join("")}</div>
   <div class="grid">${C.filter(c=>st.flt==="all"||c.e===st.flt).map(c=>S.inv[c.id]?cardH(c.id,"add"+(canAdd(c.id)?"":" dim"),S.inv[c.id]):'<div class="card dim"><div class="em">?</div><b>#'+(c.id+1)+"</b></div>").join("")}</div></div>`}
- a.innerHTML=h}
-document.addEventListener("input",e=>{if(e.target.id==="nm")st.nm=e.target.value;if(e.target.id==="cin")st.cin=e.target.value;if(e.target.id==="jc")st.jc=e.target.value});
+ return h}
+function R(){
+ const a=$("#app");let h=topH();
+ if(st.tab==="game"){h+=gameH();st.dealt=true}else h+=tabH();
+ a.innerHTML=h;
+ if(st.tab==="pack")st.packAnim=false;
+ st.coinBump=0;
+ if(st.msg){toast(st.msg);st.msg=""}}
+// ---- อีเวนต์
+let ct=null;
+document.addEventListener("input",e=>{const i=e.target.id;if(i==="nm")st.nm=e.target.value;
+ if(i==="cin"){st.cin=e.target.value;clearTimeout(ct);ct=setTimeout(()=>{if(st.cin.length>80){
+  if(st.p2p==="host"&&pc&&st.conn!=="connecting"&&st.conn!=="open")p2pGo();else if(st.p2p==="guest"&&!st.out)p2pAns()}},400)}});
 document.addEventListener("click",e=>{
  const t=e.target.closest("[data-tab],[data-act],[data-flt],[data-help],.card");if(!t)return;
+ const act=t.dataset.act;
+ if(act==="snd"){S.snd=!S.snd;sv();if(S.snd)snd("pick");return R()}
+ if(act==="seen"){S.seen=true;st.tut=false;sv();return R()}
+ if(act==="tut"){st.tut=!st.tut;st.tab==="game"?0:st.tab="play";return R()}
  if(t.dataset.tab){st.tab=t.dataset.tab;return R()}
  if(t.dataset.flt){st.flt=t.dataset.flt;return R()}
- const act=t.dataset.act;
  if(t.dataset.help){st.help=st.help===t.dataset.help?"":t.dataset.help;return R()}
+ if(act==="home")return location.reload();
+ if(act==="copylink")return copy(link());
+ if(act==="copycode")return copy(st.out);
  if(st.tab==="game"){
   if(act==="closeview"){st.view=-1;return R()}
-  if(t.classList.contains("card")&&!t.classList.contains("pick")&&t.dataset.id!==undefined){st.view=+t.dataset.id;return R()}
-  if(t.classList.contains("pick")&&t.dataset.i!==undefined){st.sel=+t.dataset.i;return R()}
+  if(act==="again"){if(bot)startBot();else{st.rm=true;send({t:"rm"});toast("รอเพื่อนกดเล่นอีกครั้ง…");checkRm()}return}
+  if(t.classList.contains("pick")&&t.dataset.i!==undefined){st.sel=+t.dataset.i;snd("pick");return R()}
+  if(t.classList.contains("card")&&t.dataset.id!==undefined){st.view=+t.dataset.id;return R()}
   if(act==="unsel"){st.sel=-1;return R()}
-  if(act==="play"&&st.sel>=0){mine.picks.push(mine.hand.splice(st.sel,1)[0]);st.sel=-1;save();return R()}
+  if(act==="play"&&st.sel>=0){mine.picks.push(mine.hand.splice(st.sel,1)[0]);st.sel=-1;snd("play");save();return R()}
   return}
  if(act==="bot")return startBot();
  if(act==="p2phost")return p2pHost();
- if(act==="p2pguest"){st.p2p="guest";st.out="";st.cin="";return R()}
- if(act==="p2pans")return p2pAns();
- if(act==="p2pgo")return p2pGo();
- if(act==="copy"){const o=$("#out");o.select();try{navigator.clipboard.writeText(st.out).catch(()=>document.execCommand("copy"))}catch(x){document.execCommand("copy")}return}
- if(act==="create"){const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";return join([0,0,0,0].map(()=>rnd(A)).join(""))}
- if(act==="join"){if(st.jc.trim().length===4)return join(st.jc.trim());st.msg="รหัสห้องมี 4 ตัวอักษร";return R()}
- if(act==="open"&&S.coins>=PACK){S.coins-=PACK;st.pack=openPack();return R()}
+ if(act==="p2pguest"){st.p2p="guest";st.out="";st.cin="";st.conn="";return R()}
+ if(act==="p2pcancel")return p2pCancel();
+ if(act==="open"&&S.coins>=PACK){const had=new Set(Object.keys(S.inv));S.coins-=PACK;st.pack=openPack();st.packAnim=true;st.newIds=st.pack.filter(i=>!had.has(String(i)));st.coinBump=1;snd("coin");
+  st.pack.forEach((id,k)=>setTimeout(()=>snd(C[id].r==="L"?"legend":C[id].r==="R"?"rare":"flip"),250+k*180));return R()}
  if(act==="usepack"){S.deck=build(st.pack);sv();const same=[...S.deck].sort().join()===[...st.pack].sort().join();st.msg=same?"✅ ตั้งเป็นเด็คแล้ว พร้อมเล่น!":"✅ ใช้การ์ดจากซองเป็นหลัก แต่ปรับให้ถูกกฎ (งบ 18 · ซ้ำไม่เกิน 3) แล้ว";st.tab="play";return R()}
  if(act==="clr"){S.deck=[];sv();return R()}
  if(act==="auto"){S.deck=build([]);sv();return R()}
- if(st.tab==="deck"&&t.classList.contains("card")){
+ if(st.tab==="deck"&&t.classList.contains("card")&&t.dataset.id!==undefined){
   const id=+t.dataset.id;
   if(t.dataset.rm){const k=S.deck.indexOf(id);if(k>=0)S.deck.splice(k,1)}
   else if(t.classList.contains("add")){if(canAdd(id))S.deck.push(id);else st.msg="เพิ่มไม่ได้: เด็คเต็ม · ซ้ำเกิน 3 ใบ · หรือเกินงบเด็ค"}
   sv();R()}
 });
 R();
+const hm=location.hash.match(/^#j=(.+)/);
+if(hm){st.p2p="guest";st.cin=hm[1];R();p2pAns()}
 </script></body></html>
