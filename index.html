@@ -31,12 +31,13 @@ button.sm{padding:5px 10px}button.on{outline:3px solid var(--pink)}button.go{bac
 .card .ab{top:3px;right:3px;width:22px;height:22px;background:#fff;font-size:13px;box-shadow:0 1px 2px #0003}
 .card .el{bottom:-7px;left:-6px;width:22px;height:22px;background:#fff;border:2px solid var(--line);font-size:12px}
 .card .rt{position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:800;letter-spacing:.5px;border-radius:8px;padding:0 6px;font-style:normal;white-space:nowrap}
-.card .rt.R{background:#f2b84b;color:#4a3300}.card .rt.L{background:linear-gradient(90deg,#ff7aa8,#c46bff);color:#fff}
+.card .rt.R{background:#3b8df0;color:#fff}.card .rt.E{background:#a24bff;color:#fff}.card .rt.L{background:linear-gradient(90deg,#ffb300,#ff6f3c);color:#3a1d00}
 .card .cs{position:absolute;bottom:-9px;left:50%;transform:translateX(-50%);font-style:normal;font-size:9px;background:#4a3f55;color:#fff;border-radius:8px;padding:0 6px;white-space:nowrap}
 .card .n{position:absolute;bottom:-7px;right:-6px;font-size:10px;background:#ff5c8a;color:#fff;border-radius:8px;padding:0 5px}
 .card.C{border-color:#b9b2c4}
-.card.R{border:3px solid #f2b84b;box-shadow:inset 0 0 0 1px #fff6d6,0 0 8px #f2b84baa}
-.card.L{border:3px solid transparent;background:linear-gradient(var(--t),var(--t)) padding-box,linear-gradient(135deg,#ff7aa8,#ffd54a,#7be0ff,#c46bff,#ff7aa8) border-box;box-shadow:0 0 14px #c46bffaa;animation:lglow 2.4s infinite}
+.card.R{border:3px solid #3b8df0;box-shadow:inset 0 0 0 1px #d6e8ff,0 0 8px #3b8df0aa}
+.card.E{border:3px solid #a24bff;box-shadow:inset 0 0 0 1px #ecd6ff,0 0 12px #a24bffcc}
+.card.L{border:3px solid transparent;background:linear-gradient(var(--t),var(--t)) padding-box,linear-gradient(135deg,#ffd54a,#ff8a3c,#fff0b0,#ffb300,#ffd54a) border-box;box-shadow:0 0 16px #ffb300cc;animation:lglow 2.2s infinite}
 .card.pick,.card.add{cursor:pointer}.card.pick:hover{transform:translateY(-4px)}
 .card.sel{outline:3px solid var(--pink);animation:lift .18s forwards}
 .card.dim{opacity:.35;filter:grayscale(1)}
@@ -126,36 +127,54 @@ const RING=["fire","dark","elec","leaf","ice","water","wind","earth"];
 const BEAT={};RING.forEach((e,i)=>BEAT[e]=[1,2,3].map(d=>RING[(i+d)%8]));
 const WHY={fire:"ไล่เงา · เผาวงจร · เผาไหม้",dark:"กลืนไฟฟ้า · บังแสงใบไม้ · กลืนน้ำแข็ง",elec:"ผ่าต้นไม้ · ละลายน้ำแข็ง · ช็อตน้ำ",leaf:"ทะลุหิมะ · ดูดน้ำ · บังลม",ice:"แช่แข็งน้ำ · แช่แข็งลม · แตกหิน",water:"กดลม · กัดเซาะดิน · ดับไฟ",wind:"กัดเซาะหิน · พัดไฟดับ · ปัดเงา",earth:"ทับไฟ · ดูดเงา · สายดิน"};
 const ARB=2,ROUNDS=7,WINS=4;
-const AB={s:["🛡️","โล่","กันโบนัสธาตุ"],x:["⚔️","เจาะธาตุ","ชนะธาตุ +4"],l:["🍀","โชคดี","ชนะ จั่วเพิ่ม 1"],t:["🎯","คู่ขาด","พลังเท่า = ชนะ"],n:["🌀","ล้างธาตุ","ไม่มีโบนัสธาตุ"],r:["💰","รวย","ชนะ +10🪙"],k:["🔇","ปิดผนึก","ปิดสกิลคู่ต่อสู้"],g:["💪","สู้คืน","ตามแต้ม +2"],e:["🌅","ออกตัวไว","รอบ 1–3 +2"],d:["🌙","มาทีหลัง","รอบ 5–7 +2"],y:["😤","แค้น","แพ้รอบก่อน +2"],p:["🐜","ฝูง","+1 ต่อธาตุเดียวกันที่ลงแล้ว"],b:["🏋️","รังแกเล็ก","ศัตรูพลัง ≤3 +2"],u:["🧲","ขัดขวาง","ศัตรูมีสกิล +1"]};
-const RN={C:"ธรรมดา",R:"หายาก",L:"ตำนาน"};
-// รายชื่อ + pattern: ทุก 3 ตัวอักษร = [ความสามารถ หรือ -][พลัง 1 หลัก][ราคา 1 หลัก] ต่อการ์ด 1 ใบ · เรียง C..., R×4, L×2
+// ค่าสกิล (ปรับจากการจำลองเกมให้แต่ละสกิลมีมูลค่าใกล้เคียงกัน)
+const SK={s:1,x:6,l:2,t:0,k:1,g:3,e:2,d:2,y:2,p:2,pm:4,b:3,bt:5,u:2,r:1};
+const AB={
+s:["🛡️","โล่","กันโบนัสธาตุ","ถ้าคู่ต่อสู้ชนะธาตุเรา เขาจะไม่ได้โบนัสตามวงล้อ และเราได้พลัง +1"],
+x:["⚔️","เจาะธาตุ","ชนะธาตุ +6","ถ้าเราชนะธาตุคู่ต่อสู้ โบนัสเป็น +6 แทน +2"],
+l:["🍀","โชคดี","รอบ 1,3,5,7 +2","ถ้าลงในรอบเลขคี่ (1, 3, 5, 7) ได้พลัง +2"],
+t:["🎯","คู่ขาด","พลังเท่า = ชนะ","ถ้าพลังรวมเท่ากัน เราเป็นฝ่ายชนะ (ถ้าอีกฝั่งไม่มีคู่ขาดเหมือนกัน)"],
+n:["🌀","ล้างธาตุ","ไม่มีโบนัสธาตุ","ยกเลิกโบนัสตามวงล้อของทั้งสองฝั่ง (โบนัสฟิลด์ยังอยู่)"],
+r:["💰","รวย","พลัง +1 · ชนะ +10💎","ได้พลัง +1 และถ้าชนะรอบนี้ ได้เพชร +10 เมื่อจบเกม"],
+k:["🔇","ปิดผนึก","ปิดสกิล + ศัตรู −1","ยกเลิกสกิลของการ์ดคู่ต่อสู้ในรอบนี้ และพลังของเขา −1"],
+g:["💪","สู้คืน","ตามแต้ม +3","ถ้าตอนนี้แต้มเรามีน้อยกว่า ได้พลัง +3"],
+e:["🌅","ออกตัวไว","รอบ 1–3 +2","ถ้าลงในรอบที่ 1–3 ได้พลัง +2"],
+d:["🌙","มาทีหลัง","รอบ 5–7 +2","ถ้าลงในรอบที่ 5–7 ได้พลัง +2"],
+y:["😤","แค้น","แพ้รอบก่อน +2","ถ้ารอบก่อนหน้าแพ้ ได้พลัง +2"],
+p:["🐜","ฝูง","+2 ต่อธาตุเดียวกัน","ได้พลัง +2 ต่อการ์ดธาตุเดียวกันที่เราลงไปแล้ว (สูงสุด +4) เหมาะกับเด็คธาตุเดียว"],
+b:["🏋️","รังแกเล็ก","ศัตรูพลัง ≤5 +3","ถ้าพลังพื้นฐานของคู่ต่อสู้ ≤ 5 ได้พลัง +3"],
+u:["🧲","ขัดขวาง","ศัตรูมีสกิล +2","ถ้าคู่ต่อสู้มีสกิล ได้พลัง +2"]};
+const RN={C:"ธรรมดา",R:"หายาก",E:"มหากาพย์",L:"ตำนาน"},TIERS=["C","R","E","L"],TAG={R:"RARE",E:"EPIC",L:"LEGEND"};
+// รายชื่อ + pattern: ทุก 4 ตัวอักษร = [ความสามารถ หรือ -][พลัง][ราคา][ระดับ C/R/E/L] ต่อการ์ด 1 ใบ
 const D={
-fire:["🦊จิ้งจอกถ่าน,🐯เสือเตา,🦎กิ้งก่าไฟ,🐓ไก่เพลิง,🐕หมาเถ้า,🐒ลิงควัน,🐖หมูย่าง,🦁สิงห์ลาวา,🐂วัวเพลิง,🐎ม้าเปลวเพลิง,🦂แมงป่องร้อน,🐉มังกรแดง,🦖ไดโนภูเขาไฟ","u42-53-31-21g42-42-11b63-74-53-63x95b84"],
-water:["🐟ปลาฟอง,🐢เต่าธาร,🦀ปูกรรไกร,🐸กบฝน,🦐กุ้งจิ๋ว,🐠ปลาการ์ตูน,🦆เป็ดบึง,🐙หมึกยักษ์,🦈ฉลามคลื่น,🐬โลมาเกลียวคลื่น,🦦นากธาร,🐋วาฬคลื่น,🦑หมึกพายุ","-21s43-53-31-11-42-63k63-74-53-63s95n85"],
-leaf:["🐛หนอนใบ,🐰กระต่ายหญ้า,🐌หอยทากมอส,🦗จิ้งหรีดใบ,🐞เต่าทองดอก,🦋ผีเสื้อละออง,🐹แฮมสเตอร์ถั่ว,🦌กวางป่า,🦥สลอธมอส,🦘จิงโจ้เถาวัลย์,🐼แพนด้าไผ่,🦕ไดโนป่า,🦧ลิงผู้พิทักษ์","-11-31-21-42l42-53-63-63-53-74-84d84g95"],
-elec:["🐝ผึ้งสปาร์ก,🐭หนูแรงดัน,🦇ค้างคาวคลื่น,🐈แมวไฟสถิต,🦔เม่นประจุ,🦟ยุงช็อต,🐤เจี๊ยบไฟช็อต,🦅นกฟ้าผ่า,🐺หมาป่าสายฟ้า,🦓ม้าลายเส้นไฟ,🦒ยีราฟล่อฟ้า,🦄ยูนิคอร์นสายฟ้า,🐲มังกรพายุ","-42-31-53-63s42-11-21-74-63-53-84l84k95"],
-earth:["🐜มดดิน,🐗หมูป่าหิน,🦎กิ้งก่าโคลน,🦡แบดเจอร์ถ้ำ,🐀หนูขุดดิน,🐪อูฐทราย,🦏แรดผา,🐃ควายนา,🐄วัวผา,🐻หมีถ้ำ,🐘ช้างภูเขา,🐫อูฐเทพทะเลทราย","p32-53-21-42-11-31x74-63-53-74b95r84"],
-ice:["🐧เพนกวินจิ๋ว,🐇กระต่ายหิมะ,🦢หงส์ผลึก,🐑แกะขนฝอย,🐐แพะหน้าผา,🦉นกฮูกน้ำค้าง,🐩พุดเดิ้ลน้ำค้างแข็ง,🦙ลามะขนเยือก,🦃ไก่งวงเหมันต์,🦛ฮิปโปเยือก,🐳วาฬน้ำแข็ง,🐊จระเข้เหมันต์","-31e43-42-21-53-11-53-63-74-84s85t95"],
-wind:["🐦นกจิ๊บลม,🦜นกแก้วพายุ,🐥เจี๊ยบกระโชก,🦩ฟลามิงโกเหินลม,🐴ม้าน้อยลม,🐔ไก่ลมหมุน,🐆เสือดาวพายุ,🐅เสือลมกรด,🕊️นกพิราบสายลม,🐿️กระรอกร่อน,🦅อินทรีทะเลทราย,🦚นกยูงเฮอริเคน","-21-42-11-31-53-63-74b74n63-53e95y84"],
-dark:["🕷️แมงมุมเงา,🐍งูราตรี,🦇ค้างคาวมืด,🐀หนูท่อ,🦉นกฮูกราตรี,🦂แมงป่องดำ,🐺หมาป่าเงา,🦝แรคคูนจอมขโมย,🐈แมวดำ,🦨สกั๊งค์หมอกดำ,👻ผีเงาเฒ่า,😈จ้าวมืด","-31-42-21-11d42k42-84-63-53-74k84u95"]
+fire:["🦊จิ้งจอกถ่าน,🐯เสือเตา,🦎กิ้งก่าไฟ,🐓ไก่เพลิง,🐕หมาเถ้า,🐒ลิงควัน,🐖หมูย่าง,🦁สิงห์ลาวา,🐂วัวเพลิง,🐎ม้าเปลวเพลิง,🦂แมงป่องร้อน,🐉มังกรแดง,🦖ไดโนภูเขาไฟ","u42C-53C-32C-21Cg42C-42C-11Cb63R-74E-53R-63Rx95Lb84E"],
+water:["🐟ปลาฟอง,🐢เต่าธาร,🦀ปูกรรไกร,🐸กบฝน,🦐กุ้งจิ๋ว,🐠ปลาการ์ตูน,🦆เป็ดบึง,🐙หมึกยักษ์,🦈ฉลามคลื่น,🐬โลมาเกลียวคลื่น,🦦นากธาร,🐋วาฬคลื่น,🦑หมึกพายุ","-21Cs43C-53C-32C-11C-42C-63Ck64R-74E-53R-63Rs95Ln84E"],
+leaf:["🐛หนอนใบ,🐰กระต่ายหญ้า,🐌หอยทากมอส,🦗จิ้งหรีดใบ,🐞เต่าทองดอก,🦋ผีเสื้อละออง,🐹แฮมสเตอร์ถั่ว,🦌กวางป่า,🦥สลอธมอส,🦘จิงโจ้เถาวัลย์,🐼แพนด้าไผ่,🦕ไดโนป่า,🦧ลิงผู้พิทักษ์","-11C-32C-21C-42Cl42C-53C-63C-63R-53R-74R-84Ed84Eg95L"],
+elec:["🐝ผึ้งสปาร์ก,🐭หนูแรงดัน,🦇ค้างคาวคลื่น,🐈แมวไฟสถิต,🦔เม่นประจุ,🦟ยุงช็อต,🐤เจี๊ยบไฟช็อต,🦅นกฟ้าผ่า,🐺หมาป่าสายฟ้า,🦓ม้าลายเส้นไฟ,🦒ยีราฟล่อฟ้า,🦄ยูนิคอร์นสายฟ้า,🐲มังกรพายุ","-42C-32C-53C-63Cs43C-11C-21C-74R-63R-53R-84El84Ek95L"],
+earth:["🐜มดดิน,🐗หมูป่าหิน,🦎กิ้งก่าโคลน,🦡แบดเจอร์ถ้ำ,🐀หนูขุดดิน,🐪อูฐทราย,🦏แรดผา,🐃ควายนา,🐄วัวผา,🐻หมีถ้ำ,🐘ช้างภูเขา,🐫อูฐเทพทะเลทราย","p32C-53C-21C-42C-11C-32Cx74R-63R-53R-74Eb95Lr85E"],
+ice:["🐧เพนกวินจิ๋ว,🐇กระต่ายหิมะ,🦢หงส์ผลึก,🐑แกะขนฝอย,🐐แพะหน้าผา,🦉นกฮูกน้ำค้าง,🐩พุดเดิ้ลน้ำค้างแข็ง,🦙ลามะขนเยือก,🦃ไก่งวงเหมันต์,🦛ฮิปโปเยือก,🐳วาฬน้ำแข็ง,🐊จระเข้เหมันต์","-32Ce42C-42C-21C-53C-11C-53R-63R-74R-84Es85Et95L"],
+wind:["🐦นกจิ๊บลม,🦜นกแก้วพายุ,🐥เจี๊ยบกระโชก,🦩ฟลามิงโกเหินลม,🐴ม้าน้อยลม,🐔ไก่ลมหมุน,🐆เสือดาวพายุ,🐅เสือลมกรด,🕊️นกพิราบสายลม,🐿️กระรอกร่อน,🦅อินทรีทะเลทราย,🦚นกยูงเฮอริเคน","-21C-42C-11C-32C-53C-63C-74Eb74Rn63R-53Re95Ly84E"],
+dark:["🕷️แมงมุมเงา,🐍งูราตรี,🦇ค้างคาวมืด,🐀หนูท่อ,🦉นกฮูกราตรี,🦂แมงป่องดำ,🐺หมาป่าเงา,🦝แรคคูนจอมขโมย,🐈แมวดำ,🦨สกั๊งค์หมอกดำ,👻ผีเงาเฒ่า,😈จ้าวมืด","-32C-42C-21C-11Cd42Ck43C-84E-63R-53R-74Rk85Eu95L"]
 };
 const C=[];
-EK.forEach(e=>{const L=D[e][0].split(","),pat=D[e][1],nc=L.length-6;
- L.forEach((s,k)=>{const m=s.match(/^\P{L}+/u)[0],r=k<nc?"C":k<nc+4?"R":"L",a=pat[3*k]==="-"?"":pat[3*k];
-  C.push({id:C.length,m,n:s.slice(m.length),e,r,p:+pat[3*k+1],c:+pat[3*k+2],a})})});
+EK.forEach(e=>{const L=D[e][0].split(","),pat=D[e][1];
+ L.forEach((s,k)=>{const m=s.match(/^\P{L}+/u)[0],a=pat[4*k]==="-"?"":pat[4*k];
+  C.push({id:C.length,m,n:s.slice(m.length),e,r:pat[4*k+3],p:+pat[4*k+1],c:+pat[4*k+2],a})})});
 function arenas(P,Q){let s=((P.seed|0)^(Q.seed|0))>>>0;const rnd=()=>{s=(s+0x6D2B79F5)>>>0;let t=s;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296};
  const a=EK.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a.slice(0,ROUNDS)}
 // ตัดสิน 1 รอบ (มุมมองของ a) · ctx: s=แต้มเรา o=แต้มเขา i=รอบ prev=การ์ดที่เราลงแล้ว last=ผลรอบก่อน ar=ธาตุของฟิลด์
 function duel(a,b,ca={},cb={}){const A=C[a],B=C[b];let ea=A.a,eb=B.a;
  ca={s:0,o:0,i:0,prev:[],last:0,ar:null,...ca};cb={s:0,o:0,i:0,prev:[],last:0,ar:null,...cb};
  if(ea==="k"&&eb==="k")ea=eb="";else if(ea==="k")eb="";else if(eb==="k")ea="";
- const gb=(e,M,T,tf,c)=>e==="g"?(c.s<c.o?2:0):e==="e"?(c.i<3?2:0):e==="d"?(c.i>=4?2:0):e==="y"?(c.last<0?2:0):e==="p"?Math.min(3,c.prev.filter(i=>C[i].e===M.e).length):e==="b"?(T.p<=3?2:0):e==="u"?(tf?1:0):0;
- let x=A.p,y=B.p,bx=0,by=0;
- if(ea!=="n"&&eb!=="n"){if(BEAT[A.e].includes(B.e)&&eb!=="s")bx=ea==="x"?4:2;if(BEAT[B.e].includes(A.e)&&ea!=="s")by=eb==="x"?4:2}
- const gx=gb(ea,A,B,!!eb,ca),gy=gb(eb,B,A,!!ea,cb),ax=ca.ar&&A.e===ca.ar?ARB:0,ay=cb.ar&&B.e===cb.ar?ARB:0;
+ const gb=(e,M,T,tf,c)=>e==="g"?(c.s<c.o?SK.g:0):e==="e"?(c.i<3?SK.e:0):e==="d"?(c.i>=4?SK.d:0):e==="y"?(c.last<0?SK.y:0):e==="p"?Math.min(SK.pm,SK.p*c.prev.filter(i=>C[i].e===M.e).length):e==="b"?(T.p<=SK.bt?SK.b:0):e==="u"?(tf?SK.u:0):e==="l"?(c.i%2===0?SK.l:0):e==="r"?SK.r:0;
+ let x=A.p,y=B.p,bx=0,by=0,sx=0,sy=0;
+ if(ea!=="n"&&eb!=="n"){if(BEAT[A.e].includes(B.e)){if(eb==="s")sy=SK.s;else bx=ea==="x"?SK.x:ARB}if(BEAT[B.e].includes(A.e)){if(ea==="s")sx=SK.s;else by=eb==="x"?SK.x:ARB}}
+ const gx=gb(ea,A,B,!!eb,ca)+sx,gy=gb(eb,B,A,!!ea,cb)+sy,ax=ca.ar&&A.e===ca.ar?ARB:0,ay=cb.ar&&B.e===cb.ar?ARB:0;
+ if(ea==="k")y-=SK.k;if(eb==="k")x-=SK.k;
  x+=bx+gx+ax;y+=by+gy+ay;
- const w=x>y?1:y>x?-1:(ea==="t"&&eb!=="t"?1:eb==="t"&&ea!=="t"?-1:0);
- return{x,y,w,bx,by,gx,gy,ax,ay,ea,eb}}
+ let w=x>y?1:y>x?-1:0,tt=0;
+ if(ea==="t"&&eb!=="t"&&w<=0&&y-x<=SK.t){w=1;tt=1}else if(eb==="t"&&ea!=="t"&&w>=0&&x-y<=SK.t){w=-1;tt=-1}
+ return{x,y,w,bx,by,gx,gy,ax,ay,ea,eb,tt}}
 function rounds(P,Q){const d=Math.min(P.picks.length,Q.picks.length),o=[],ar=arenas(P,Q);let sp=0,sq=0,lp=0;
  for(let i=0;i<d;i++){const r=duel(P.picks[i],Q.picks[i],{s:sp,o:sq,i,prev:P.picks.slice(0,i),last:lp,ar:ar[i]},{s:sq,o:sp,i,prev:Q.picks.slice(0,i),last:-lp,ar:ar[i]});o.push(r);lp=r.w;if(r.w>0)sp++;else if(r.w<0)sq++}return o}
 // ---- ข้อมูลผู้เล่น
@@ -165,12 +184,12 @@ const sv=()=>{try{localStorage.setItem("mc3",JSON.stringify(S))}catch(e){}};
 try{const o=JSON.parse(localStorage.getItem("mc2")||"null");if(o&&!localStorage.getItem("mc3")){S.inv=o.inv||{};S.coins=o.coins||100;S.deck=[];S.snd=o.snd!==false}}catch(e){}
 const rnd=a=>a[Math.floor(Math.random()*a.length)];
 const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-function one(g){const r=Math.random();let t=r<.7?"C":r<.95?"R":"L";if(g&&t==="C")t=Math.random()<.85?"R":"L";return rnd(C.filter(c=>c.r===t)).id}
+function one(g){const r=Math.random();const t=g?(r<.7?"R":r<.94?"E":"L"):(r<.62?"C":r<.89?"R":r<.97?"E":"L");return rnd(C.filter(c=>c.r===t)).id}
 const ten=()=>[...Array(10)].map((_,i)=>one(i===9));
 function openPack(){const p=ten();p.forEach(i=>S.inv[i]=(S.inv[i]||0)+1);sv();return p}
-let st={ack:0,tab:"play",nm:"",flt:"all",pack:null,newIds:[],packAnim:false,sel:-1,msg:"",help:false,view:-1,p2p:"",out:"",cin:"",conn:"",busy:0,flipDone:0,dealt:false,confDone:0,rm:false,orm:false,coinBump:0,wv:"fire"};
+let st={dv:null,ack:0,tab:"play",nm:"",flt:"all",pack:null,newIds:[],packAnim:false,sel:-1,msg:"",help:false,view:-1,p2p:"",out:"",cin:"",conn:"",busy:0,flipDone:0,dealt:false,confDone:0,rm:false,orm:false,coinBump:0,wv:"fire"};
 const dcnt=id=>S.deck.filter(x=>x===id).length;
-const PACK=100,BUD=28,MAXC=3,MAXL=1;
+const PACK=100,BUD=29,MAXC=3,MAXL=1;
 const minc=()=>Math.min(9,...Object.keys(S.inv).filter(i=>S.inv[i]>0).map(i=>C[i].c));
 const dcost=d=>d.reduce((t,i)=>t+C[i].c,0);
 const canAdd=(id,d=S.deck)=>d.length<10&&d.filter(x=>x===id).length<Math.min(MAXC,S.inv[id]||0)&&(C[id].r!=="L"||d.filter(x=>C[x].r==="L").length<MAXL)&&dcost(d)+C[id].c+(9-d.length)*minc()<=BUD;
@@ -179,7 +198,7 @@ function build(pref){const pool=[];Object.entries(S.inv).forEach(([i,n])=>{for(l
  const key=i=>(pref.includes(i)?1000:0)+C[i].p,d=[];
  pool.sort((a,b)=>key(b)-key(a)||b-a).forEach(i=>{if(canAdd(i,d))d.push(i)});return d}
 // เด็คเริ่มต้นสำหรับผู้เล่นใหม่: ชุดที่จูนไว้แล้ว (เต็มงบ ไม่มีตำนาน หลายธาตุ)
-const STARTERS=[[8, 59, 36, 84, 13, 94, 45, 19, 91, 49], [10, 88, 81, 28, 58, 84, 49, 94, 36, 40], [2, 66, 94, 36, 16, 83, 73, 56, 19, 49], [73, 36, 17, 4, 69, 23, 10, 71, 20, 58], [55, 35, 47, 90, 10, 20, 28, 95, 58, 36], [3, 8, 49, 47, 97, 27, 7, 20, 56, 84]];
+const STARTERS=[[91, 84, 26, 12, 25, 13, 81, 37, 73, 94], [12, 45, 63, 71, 4, 36, 50, 76, 69, 58], [37, 23, 63, 49, 95, 26, 28, 71, 8, 90], [94, 23, 81, 49, 25, 61, 35, 45, 56, 44], [25, 50, 91, 4, 8, 89, 63, 3, 92, 97], [47, 19, 25, 6, 82, 66, 78, 12, 61, 7]];
 function starter(){if(STARTERS.length)return rnd(STARTERS).slice();let d,n=0;do{d=shuf(C.filter(c=>c.r!=="L")).slice(0,10).map(c=>c.id);n++}while((dcost(d)>BUD||dcost(d)<BUD-3)&&n<5000);
  return dcost(d)<=BUD?d:C.filter(c=>c.r!=="L").sort((a,b)=>a.c-b.c).slice(0,10).map(c=>c.id)}
 if(!Object.keys(S.inv).length){const d=starter();d.forEach(i=>S.inv[i]=(S.inv[i]||0)+1);S.deck=d;sv();st.msg="🎁 ได้การ์ดเริ่มต้น 10 ใบ"}
@@ -193,15 +212,22 @@ function toast(t){const e=$("#toast");if(!e)return;e.textContent=t;e.classList.a
 function fb(t){const x=document.createElement("textarea");x.value=t;document.body.appendChild(x);x.select();try{document.execCommand("copy");toast("คัดลอกแล้ว ✅")}catch(e){toast("คัดลอกไม่ได้")}x.remove()}
 function copy(t){try{navigator.clipboard.writeText(t).then(()=>toast("คัดลอกแล้ว ✅"),()=>fb(t))}catch(e){fb(t)}}
 // ---- การ์ด
-function cardH(id,x="",n=0,d=0,ex="",pw=null,cs=false){const c=C[id];return `<div class="card ${c.r} ${x}" style="--t:${TINT[c.e]};--d:${d}s" data-id="${id}" ${ex} title="${c.n}">${c.r!=="C"?`<i class="rt ${c.r}">${c.r==="R"?"RARE":"LEGEND"}</i>`:""}<i class="p ${pw!==null&&pw>c.p?"up":""}">${pw??c.p}</i>${c.a?`<i class="ab">${AB[c.a][0]}</i>`:""}<div class="em">${c.m}</div><i class="el">${EM[c.e]}</i><b>${c.n}</b>${cs?`<i class="cs">ราคา ${c.c}</i>`:""}${n?`<span class="n">×${n}</span>`:""}</div>`}
-function info(id){const c=C[id];return `<b>${c.m} ${c.n}</b> ${EM[c.e]}${EN[c.e]} · ${RN[c.r]} · พลังโจมตี ${c.p}${c.a?`<br>${AB[c.a][0]} ${AB[c.a][1]}: ${AB[c.a][2]}`:""}<br><small>ชนะ ${BEAT[c.e].map(x=>EM[x]).join("")} · แพ้ ${EK.filter(k=>BEAT[k].includes(c.e)).map(x=>EM[x]).join("")}</small>`}
+function cardH(id,x="",n=0,d=0,ex="",pw=null,cs=false){const c=C[id];return `<div class="card ${c.r} ${x}" style="--t:${TINT[c.e]};--d:${d}s" data-id="${id}" ${ex} title="${c.n}">${c.r!=="C"?`<i class="rt ${c.r}">${TAG[c.r]}</i>`:""}<i class="p ${pw!==null&&pw>c.p?"up":""}">${pw??c.p}</i>${c.a?`<i class="ab">${AB[c.a][0]}</i>`:""}<div class="em">${c.m}</div><i class="el">${EM[c.e]}</i><b>${c.n}</b>${cs?`<i class="cs">ราคา ${c.c}</i>`:""}${n?`<span class="n">×${n}</span>`:""}</div>`}
+function info(id){const c=C[id],a=c.a?AB[c.a]:null;return `<b>${c.m} ${c.n}</b> <span class="chip">${RN[c.r]}</span> ${EM[c.e]}${EN[c.e]}<br>พลังโจมตี <b>${c.p}</b>${a?`<br>${a[0]} <b>${a[1]}</b> — ${a[3]}`:"<br><small>ไม่มีสกิล</small>"}<br><small>ชนะ ${BEAT[c.e].map(x=>EM[x]).join("")} · แพ้ ${EK.filter(k=>BEAT[k].includes(c.e)).map(x=>EM[x]).join("")}</small>`}
+function whyNot(id){const d=S.deck;if(d.length>=10)return "เด็คเต็ม 10 ใบแล้ว";const n=d.filter(x=>x===id).length;if(n>=(S.inv[id]||0))return "มีการ์ดใบนี้ไม่พอ";if(n>=MAXC)return "ซ้ำได้ไม่เกิน "+MAXC+" ใบ";if(C[id].r==="L"&&d.filter(x=>C[x].r==="L").length>=MAXL)return "ใส่ตำนานได้ "+MAXL+" ใบ";return "เกินงบเด็ค (เหลือ "+(BUD-dcost(d))+")"}
+function dvH(){if(!st.dv)return "";const id=st.dv.id,src=st.dv.src,c=C[id];let b="";
+ if(src==="inv")b=canAdd(id)?`<button class="go" data-act="dvadd">➕ ใส่เด็ค</button>`:`<small>ใส่เด็คไม่ได้: ${whyNot(id)}</small>`;
+ if(src==="deck")b=`<button class="go" data-act="dvrm">➖ เอาออกจากเด็ค</button>`;
+ return `<div class="cbar"><div>${info(id)}${src!=="view"?`<br><small>ราคา ${c.c} (เด็คใช้งบ ${dcost(S.deck)}/${BUD})</small>`:""}</div><div class="row">${b}<button data-act="dvx">✖ ปิด</button></div></div>`}
+function buildR(){const pool=[];Object.entries(S.inv).forEach(([i,n])=>{for(let k=0;k<n;k++)pool.push(+i)});
+ const th=shuf(EK).slice(0,Math.random()<.5?2:3),key=i=>C[i].p+(C[i].a?.5:0)+(th.includes(C[i].e)?2.5:0)+Math.random()*3,d=[];
+ pool.map(i=>[key(i),i]).sort((a,b)=>b[0]-a[0]).forEach(([k,i])=>{if(canAdd(i,d))d.push(i)});return{d,th}}
 // ---- แมตช์
 let bot=false,opp=null,mine=null,paid=false,pc=null,dc=null,p2p=false;
 function newMatch(){st.ack=0;paid=false;st.flipDone=0;st.dealt=false;st.confDone=0;st.sel=-1;st.rm=false;st.orm=false;st.help=false;st.view=-1;st.tab="game"}
 function fromDeck(){const d=shuf(S.deck);return{name:st.nm.trim()||"ผู้เล่น",hand:d.slice(0,5),deck:d.slice(5),picks:[],drawn:[],seed:Math.floor(Math.random()*2147483647)}}
 function settle(P,Q){let ch=false;const rs=rounds(P,Q);
- rs.forEach((r,i)=>{if(!P.drawn.includes(i)){P.drawn.push(i);ch=true;
-  let n=1+(r.w>0&&r.ea==="l"?1:0);while(n--&&P.deck.length)P.hand.push(P.deck.shift())}});return ch}
+ rs.forEach((r,i)=>{if(!P.drawn.includes(i)){P.drawn.push(i);ch=true;if(P.deck.length)P.hand.push(P.deck.shift())}});return ch}
 const botDeck=()=>starter();
 function startBot(){newMatch();bot=true;p2p=false;mine=fromDeck();const d=botDeck();
  opp={name:"บอทมอน 🤖",hand:d.slice(0,5),deck:d.slice(5),picks:[],drawn:[],seed:Math.floor(Math.random()*2147483647)};R()}
@@ -271,8 +297,8 @@ function notesH(r,a,b){const n=[];
  if(r.ea==="n"||r.eb==="n")n.push("🌀 ล้างธาตุ: ไม่มีโบนัสตามวงล้อ");
  if((a.a&&r.ea!==a.a)||(b.a&&r.eb!==b.a))n.push("🔇 สกิลถูกปิดผนึก");
  [[a,r.ea,b,r.eb,"ของคุณ"],[b,r.eb,a,r.ea,"ของคู่ต่อสู้"]].forEach(([p,pe,q,qe,w])=>{if(pe==="s"&&BEAT[q.e].includes(p.e)&&qe!=="n")n.push(`🛡️ โล่${w}กันโบนัสธาตุ`)});
- if(r.x===r.y&&r.w)n.push("🎯 พลังเท่ากัน สกิลคู่ขาดตัดสิน");
- if(r.w>0&&r.ea==="l")n.push("🍀 ชนะ จั่วเพิ่ม 1 ใบ");if(r.w>0&&r.ea==="r")n.push("💰 ได้ 🪙+10");
+ if(r.tt)n.push(r.tt>0?"🎯 พลังเท่ากัน สกิลคู่ขาดทำให้เราชนะ":"🎯 พลังเท่ากัน สกิลคู่ขาดทำให้คู่ต่อสู้ชนะ");
+ if(r.w>0&&r.ea==="r")n.push("💰 ได้ 💎+10");
  return n.length?`<small>${n.join(" · ")}</small>`:""}
 function gameH(){
  if(!opp)return `<div class="box big">⏳ รอเพื่อนเชื่อมต่อ…</div>`;
@@ -295,7 +321,7 @@ function gameH(){
  if(over){let g=me>op?40:me<op?20:30;g+=rich*10;
   if(!paid){paid=true;S.coins+=g;sv();st.coinBump=1;snd(me>op?"win":me<op?"lose":"coin")}
   let cf="";if(me>op&&!st.confDone){st.confDone=1;cf=confetti()}
-  h+=`${cf}<div class="box big pop"><b style="font-size:24px">${me>op?"🏆 คุณชนะ!":me<op?"💔 คุณแพ้":"🤝 เสมอ"}</b><br>${me} : ${op}<div class="reward">🪙 +${g}</div>${rich?`<small>รวมโบนัส 💰 ×${rich}</small><br>`:""}<div class="row" style="justify-content:center;margin-top:8px"><button class="go" data-act="again">🔁 เล่นอีกครั้ง</button><button data-act="home">🏠 หน้าแรก</button></div></div>`;
+  h+=`${cf}<div class="box big pop"><b style="font-size:24px">${me>op?"🏆 คุณชนะ!":me<op?"💔 คุณแพ้":"🤝 เสมอ"}</b><br>${me} : ${op}<div class="reward">💎 +${g}</div>${rich?`<small>รวมโบนัส 💰 ×${rich}</small><br>`:""}<div class="row" style="justify-content:center;margin-top:8px"><button class="go" data-act="again">🔁 เล่นอีกครั้ง</button><button data-act="home">🏠 หน้าแรก</button></div></div>`;
   return h}
  const c=ar[done];
  h+=`<div class="vs">${picked?cardH(mine.picks[done],"sel"):st.sel>=0?cardH(mine.hand[st.sel],"sel"):'<div class="slot now">คุณ<br>เลือกการ์ด</div>'}<div class="vsx">⚔</div>${opp.picks.length>done?'<div class="cback">🂠</div>':'<div class="slot now">คู่ต่อสู้<br>กำลังเลือก…</div>'}</div>
@@ -305,20 +331,21 @@ function gameH(){
  else if(st.sel>=0)h+=`<div class="cbar"><div>${info(mine.hand[st.sel])}</div><div class="row"><button class="go" data-act="play">✔ ลงการ์ด</button><button data-act="unsel">✖ ยกเลิก</button></div></div>`;
  return h}
 // ---- หน้าแรก
-const topH=()=>`<div class="top"><span class="coin ${st.coinBump?"bump":""}">🪙 ${S.coins}</span><span class="row"><button class="sm" data-act="snd">${S.snd?"🔊":"🔇"}</button><button class="sm ${st.help?"on":""}" data-act="help">❓</button></span></div>`;
+const topH=()=>`<div class="top"><span class="coin ${st.coinBump?"bump":""}">💎 ${S.coins}</span><span class="row"><button class="sm" data-act="snd">${S.snd?"🔊":"🔇"}</button><button class="sm ${st.help?"on":""}" data-act="help">❓</button></span></div>`;
 function tabH(){let h=`<div class="nav">${[["play","⚔️ เล่น"],["pack","🎁 ซอง"],["deck","🃏 เด็ค"]].map(([k,t])=>`<button data-tab="${k}" class="${st.tab===k?"on":""}">${t}</button>`).join("")}</div>${helpH()}`;
  if(st.tab==="play"){const ok=deckOk();
-  h+=`<div class="box"><b>วิธีเล่น</b><br><small>🃏 เด็ค 10 ใบ (งบเด็ครวมไม่เกิน ${BUD}) · ตำนานใส่ได้ 1 ใบ<br>⚔️ ${ROUNDS} รอบ ใครได้ ${WINS} แต้มก่อนชนะ · เลือกการ์ดจากมือทีละใบ เปิดพร้อมกัน<br>⚑ ทุกรอบมี “ฟิลด์ธาตุ” สุ่ม (ดูแถบรอบ) การ์ดธาตุเดียวกับฟิลด์ได้พลัง +${ARB}<br>🔄 ธาตุชนะตามวงล้อได้ +${ARB} (กด ❓ ดูวงล้อ)<br>🪙 ชนะได้เหรียญ ไปเปิดซองหาการ์ดใหม่</small></div>
+  h+=`<div class="box"><b>วิธีเล่น</b><br><small>🃏 เด็ค 10 ใบ (งบเด็ครวมไม่เกิน ${BUD}) · ตำนานใส่ได้ 1 ใบ<br>⚔️ ${ROUNDS} รอบ ใครได้ ${WINS} แต้มก่อนชนะ · เลือกการ์ดจากมือทีละใบ เปิดพร้อมกัน<br>⚑ ทุกรอบมี “ฟิลด์ธาตุ” สุ่ม (ดูแถบรอบ) การ์ดธาตุเดียวกับฟิลด์ได้พลัง +${ARB}<br>🔄 ธาตุชนะตามวงล้อได้ +${ARB} (กด ❓ ดูวงล้อ)<br>💎 ชนะได้เพชร ไปเปิดซองหาการ์ดใหม่</small></div>
   <div class="box"><input id="nm" placeholder="ชื่อของคุณ" maxlength="12" value="${esc(st.nm)}"><p>🃏 เด็คของคุณ ${S.deck.length}/10 · งบ ${dcost(S.deck)}/${BUD} ${ok?"✅ พร้อมเล่น":"⚠️ ไปแท็บ “เด็ค” ปรับก่อน"}</p><button class="go" data-act="bot" ${ok?"":"disabled"}>🤖 เล่นกับบอท</button></div>${p2pH(ok)}`}
- if(st.tab==="pack"){h+=`<div class="box big">🎁 ซองการ์ด 10 ใบ · 🪙${PACK}<br><small>ธรรมดา 70% · หายาก 25% · ตำนาน 5% (ใบสุดท้ายหายากขึ้นไป)</small><br><button class="go" data-act="open" ${S.coins>=PACK?"":"disabled"}>เปิดซอง</button>${S.coins>=PACK?"":"<br><small>เหรียญไม่พอ — เล่นชนะเพื่อรับเหรียญ</small>"}</div>`;
-  if(st.pack)h+=`<div class="box"><div class="grid" style="margin-bottom:10px">${st.pack.map((i,k)=>cardH(i,(st.packAnim?"flip ":"")+(st.newIds.includes(i)?"nw":""),0,.25+k*.18)).join("")}</div><div class="row"><button data-act="usepack">ใช้ 10 ใบนี้เป็นเด็คเลย</button><button data-tab="deck">ไปจัดเด็ค</button></div></div>`}
+ if(st.tab==="pack"){h+=`<div class="box big">🎁 ซองการ์ด 10 ใบ · 💎${PACK}<br><small>ธรรมดา 62% · หายาก 27% · มหากาพย์ 8% · ตำนาน 3% (ใบสุดท้ายหายากขึ้นไป)</small><br><button class="go" data-act="open" ${S.coins>=PACK?"":"disabled"}>เปิดซอง</button>${S.coins>=PACK?"":"<br><small>เพชรไม่พอ — เล่นชนะเพื่อรับเพชร</small>"}</div>`;
+  if(st.pack){const tc={},dl0=0;st.pack.forEach(i=>tc[C[i].r]=(tc[C[i].r]||0)+1);const dl=.35+st.pack.length*.4;
+   h+=`<div class="box"><small>เรียงจากธรรมดาไปถึงใบที่แรงที่สุด · แตะการ์ดเพื่อดูรายละเอียด</small><div class="grid" style="margin:10px 0">${st.pack.map((i,k)=>cardH(i,(st.packAnim?"flip ":"")+(st.newIds.includes(i)?"nw":""),0,.35+k*.4,'data-src="view"')).join("")}</div><div style="${st.packAnim?`animation:pop .4s ${dl}s both`:""}"><b>${TIERS.filter(t=>tc[t]).map(t=>`${RN[t]} ×${tc[t]}`).join(" · ")}</b><div class="row" style="margin-top:8px"><button data-act="usepack">ใช้ 10 ใบนี้เป็นเด็คเลย</button><button data-tab="deck">ไปจัดเด็ค</button></div></div>${st.packAnim?'<div class="row" style="margin-top:6px"><button class="sm" data-act="skip">ข้ามอนิเมชัน ⏩</button></div>':""}</div>`}}
  if(st.tab==="deck"){const tot=Object.values(S.inv).reduce((s,n)=>s+n,0),have=Object.keys(S.inv).length;
-  h+=`<div class="box"><b>🃏 เด็คของคุณ ${S.deck.length}/10 · งบ ${dcost(S.deck)}/${BUD}</b><br><small>ราคาของแต่ละใบดูที่ป้ายใต้การ์ด รวมไม่เกิน ${BUD} · ตำนานใส่ได้ ${MAXL} ใบ · ซ้ำได้ไม่เกิน ${MAXC} ใบ · แตะการ์ดในเด็คเพื่อเอาออก</small><div class="grid" style="margin:8px 0">${[...Array(10)].map((_,i)=>S.deck[i]!==undefined?cardH(S.deck[i],"add",0,0,'data-rm="1"',null,true):'<div class="slot">+</div>').join("")}</div>
-  <div class="row"><button data-act="auto">⚡ จัดให้อัตโนมัติ</button><button data-act="clr">ล้างเด็ค</button></div></div>
-  <div class="box"><b>📚 สมุดสะสม ${have}/${C.length}</b> <small>(${tot} ใบ) แตะการ์ดเพื่อเพิ่มเข้าเด็ค</small>
-  <div class="row chips" style="margin:8px 0"><button data-flt="all" class="${st.flt==="all"?"on":""}">ทั้งหมด</button>${EK.map(e=>`<button data-flt="${e}" class="${st.flt===e?"on":""}">${EM[e]}</button>`).join("")}</div>
-  <div class="grid">${C.filter(c=>st.flt==="all"||c.e===st.flt).map(c=>S.inv[c.id]?cardH(c.id,"add"+(canAdd(c.id)?"":" dim"),S.inv[c.id],0,"",null,true):'<div class="card dim"><div class="em">?</div><b>#'+(c.id+1)+"</b></div>").join("")}</div></div>`}
- return h}
+  h+=`<div class="box"><b>🃏 เด็คของคุณ ${S.deck.length}/10 · งบ ${dcost(S.deck)}/${BUD}</b><br><small>แตะการ์ดเพื่อดูรายละเอียดและสกิล · ราคาดูที่ป้ายใต้การ์ด รวมไม่เกิน ${BUD} · ตำนานใส่ได้ ${MAXL} ใบ · ซ้ำได้ไม่เกิน ${MAXC} ใบ</small><div class="grid" style="margin:8px 0">${[...Array(10)].map((_,i)=>S.deck[i]!==undefined?cardH(S.deck[i],"add",0,0,'data-src="deck"',null,true):'<div class="slot">+</div>').join("")}</div>
+  <div class="row"><button data-act="auto">🎲 สุ่มจัดให้</button><button data-act="best">🏆 จัดแรงสุด</button><button data-act="clr">ล้างเด็ค</button></div></div>
+  <div class="box"><b>📚 สมุดสะสม ${have}/${C.length}</b> <small>(${tot} ใบ) แตะการ์ดเพื่อดูสกิลและใส่เด็ค</small>
+  <div class="row chips" style="margin:8px 0"><button data-flt="all" class="${st.flt==="all"?"on":""}">ทั้งหมด</button><button data-flt="skill" class="${st.flt==="skill"?"on":""}">✨ มีสกิล</button>${EK.map(e=>`<button data-flt="${e}" class="${st.flt===e?"on":""}">${EM[e]}</button>`).join("")}</div>
+  <div class="grid">${C.filter(c=>st.flt==="all"||(st.flt==="skill"?c.a:c.e===st.flt)).map(c=>S.inv[c.id]?cardH(c.id,"add"+(canAdd(c.id)?"":" dim"),S.inv[c.id],0,'data-src="inv"',null,true):'<div class="card dim"><div class="em">?</div><b>#'+(c.id+1)+"</b></div>").join("")}</div></div>`}
+ h+=dvH();return h}
 function R(){
  const a=$("#app");let h=topH();
  if(st.tab==="game"){h+=gameH();st.dealt=true}else h+=tabH();
@@ -353,16 +380,20 @@ document.addEventListener("click",e=>{
  if(act==="p2phost")return p2pHost();
  if(act==="p2pguest"){st.p2p="guest";st.out="";st.cin="";st.conn="";return R()}
  if(act==="p2pcancel")return p2pCancel();
- if(act==="open"&&S.coins>=PACK){const had=new Set(Object.keys(S.inv));S.coins-=PACK;st.pack=openPack();st.packAnim=true;st.newIds=st.pack.filter(i=>!had.has(String(i)));st.coinBump=1;snd("coin");
-  st.pack.forEach((id,k)=>setTimeout(()=>snd(C[id].r==="L"?"legend":C[id].r==="R"?"rare":"flip"),250+k*180));return R()}
+if(act==="open"&&S.coins>=PACK){const had=new Set(Object.keys(S.inv));S.coins-=PACK;const p=openPack();p.sort((a,b)=>TIERS.indexOf(C[a].r)-TIERS.indexOf(C[b].r)||C[a].p-C[b].p);st.pack=p;st.dv=null;st.packAnim=true;st.newIds=p.filter(i=>!had.has(String(i)));st.coinBump=1;snd("coin");
+  (st.tm||[]).forEach(clearTimeout);st.tm=p.map((id,k)=>setTimeout(()=>snd(C[id].r==="L"?"legend":C[id].r==="E"||C[id].r==="R"?"rare":"flip"),380+k*400));return R()}
+ if(act==="skip"){(st.tm||[]).forEach(clearTimeout);st.packAnim=false;return R()}
+ if(act==="dvx"){st.dv=null;return R()}
+ if(act==="dvadd"){if(st.dv&&canAdd(st.dv.id)){S.deck.push(st.dv.id);sv();snd("pick")}return R()}
+ if(act==="dvrm"){if(st.dv){const k=S.deck.indexOf(st.dv.id);if(k>=0)S.deck.splice(k,1);sv()}st.dv=null;return R()}
+ if(t.classList.contains("card")&&t.dataset.src&&t.dataset.id!==undefined){st.dv={id:+t.dataset.id,src:t.dataset.src};snd("pick");return R()}
  if(act==="usepack"){S.deck=build(st.pack);sv();st.msg=S.deck.length===10?"✅ ตั้งเป็นเด็คแล้ว พร้อมเล่น":"⚠️ ไปจัดเด็คต่ออีกนิด";st.tab="play";return R()}
  if(act==="clr"){S.deck=[];sv();return R()}
- if(act==="auto"){S.deck=build([]);sv();return R()}
- if(st.tab==="deck"&&t.classList.contains("card")&&t.dataset.id!==undefined){
-  const id=+t.dataset.id;
-  if(t.dataset.rm){const k=S.deck.indexOf(id);if(k>=0)S.deck.splice(k,1)}
-  else if(t.classList.contains("add")){if(canAdd(id))S.deck.push(id);else st.msg="เพิ่มไม่ได้: เด็คเต็ม · เกินงบ · ซ้ำเกิน · หรือตำนานเกิน 1 ใบ"}
-  sv();R()}
+if(act==="best"){S.deck=build([]);sv();st.dv=null;st.msg="🏆 จัดเด็คแรงสุดจากการ์ดที่มีให้แล้ว";return R()}
+ if(act==="auto"){const key=d=>[...d].sort((a,b)=>a-b).join(),cur=key(S.deck);let best=null,th=[];
+  for(let t=0;t<12;t++){const r=buildR();if(r.d.length===10){best=r.d;th=r.th;if(key(r.d)!==cur)break}}
+  if(best){const same=key(best)===cur;S.deck=best;sv();st.dv=null;st.msg=same?"การ์ดในสมุดมีน้อย จัดได้แบบเดียว ลองเปิดซองเพิ่ม":`🎲 จัดแนว ${th.map(e=>EM[e]).join("")} ให้แล้ว (กดอีกครั้งจะได้เด็คใหม่)`}
+  else{S.deck=build([]);sv()}return R()}
 });
 R();
 const hm=location.hash.match(/^#j=(.+)/);
